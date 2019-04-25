@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Orientació per l\'EPS</string>
+    <string name="search_hint">Escriu el nom de l\'espai o professor</string>
+</resources>
