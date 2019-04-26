@@ -1,8 +1,16 @@
 package com.example.orientacioeps.Activity;
 
 
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+
+import android.content.Intent;
+
+
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -62,6 +70,27 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 toast.show();
             }
         });
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i =new Intent(MainActivity.this, EspaiSeleccionat.class);
+                i.putExtra("Element", llistaEspais.get(position).nom);
+                MainActivity.this.startActivity(i);
+            }
+        });
+
+
+        /*final TextView espaiSeleccionat = (TextView)findViewById(R.id.espai);
+
+        espaiSeleccionat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast = Toast.makeText(MainActivity.this, espaiSeleccionat.getText().toString(), Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });*/
+
     }
 
     @Override
