@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">Orientació per l\'EPS</string>
+    <string name="app_name">EPS</string>
     <string name="search_hint">Escriu el nom de l\'espai o professor</string>
+    <string name="dialog_Location_Bluetooth">Perquè funcioni correctament l\'aplicació s\'han d\'activar el Bluetooth i la Localització</string>
+    <string name="dialog_Location_Permission">Perquè funcioni correctament l\'aplicació s\'ha de permetre l\'accés a la ubicació del dispositiu</string>
+    <string name="dialog_accept">D\'acord</string>
 </resources>
