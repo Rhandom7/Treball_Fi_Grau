@@ -29,7 +29,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_prova);
+        setContentView(R.layout.espai_seleccionat);
 
         mTodoService = ((TodoApp)this.getApplication()).getAPI();
 
