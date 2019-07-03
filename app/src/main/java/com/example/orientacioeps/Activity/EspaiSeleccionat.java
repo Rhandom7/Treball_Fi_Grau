@@ -3,6 +3,7 @@ package com.example.orientacioeps.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.orientacioeps.Entity.Beacon;
@@ -33,17 +34,45 @@ public class EspaiSeleccionat extends AppCompatActivity {
 
         mTodoService = ((TodoApp)this.getApplication()).getAPI();
 
-        final String el = getIntent().getExtras().getString("Element");
-        Log.d("Element seleccionat", el);
+        final String el = getIntent().getExtras().getString("EspaiSeleccionat");
+        TextView text = findViewById(R.id.espaiSelec);
+        text.setText(el);
 
         obtenirBeacons();
         obtenirCamins();
         obtenirIndicacions();
+    }
 
+    private void beaconsObtinguts(){
+        Log.d("Dades", "BEACONS");
+        for (int i = 0; i < beacons.size(); i++) {
+            Log.d("Dades", beacons.get(i).codi);
+        }
+        Log.d("Dades", "-------------------------------");
+    }
 
+    private void caminsObtinguts(){
+        Log.d("Dades", "CAMINS");
+        for(Cami c : camins){
+            Log.d("Dades", "Cami " + c.id);
+            for(int i : c.cami){
+                Log.d("Dades", Integer.toString(i));
+            }
+            Log.d("Dades", "=====================================");
+        }
+        Log.d("Dades", "-------------------------------");
+    }
+
+    private void indicacionsObtingudes(){
+        Log.d("Dades", "INDICACIONS");
+        for(Indicacio i : indicacions){
+            Log.d("Dades", i.missatge);
+        }
+        Log.d("Dades", "-------------------------------");
     }
 
     private void obtenirBeacons(){
+
         Call<List<Beacon>> call = mTodoService.getBeacons();
 
         call.enqueue(new Callback<List<Beacon>>() {
@@ -51,14 +80,18 @@ public class EspaiSeleccionat extends AppCompatActivity {
             public void onResponse(Call<List<Beacon>> call, Response<List<Beacon>> response) {
                 if (response.isSuccessful()) {
                     beacons.addAll(response.body() != null ? response.body() : beacons);
-                } else {
-                    Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir els espais", Toast.LENGTH_SHORT);
+
+                    beaconsObtinguts();
+                }
+                else {
+                    Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir els beacons", Toast.LENGTH_SHORT);
                     toast.show();
                 }
             }
+
             @Override
             public void onFailure(Call<List<Beacon>> call, Throwable t) {
-                Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir els espais", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir els beacons", Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
@@ -72,14 +105,17 @@ public class EspaiSeleccionat extends AppCompatActivity {
             public void onResponse(Call<List<Cami>> call, Response<List<Cami>> response) {
                 if (response.isSuccessful()) {
                     camins.addAll(response.body() != null ? response.body() : camins);
-                } else {
-                    Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir els espais", Toast.LENGTH_SHORT);
+
+                    caminsObtinguts();
+                }
+                else {
+                    Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir els camins", Toast.LENGTH_SHORT);
                     toast.show();
                 }
             }
             @Override
             public void onFailure(Call<List<Cami>> call, Throwable t) {
-                Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir els espais", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir els camins", Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
@@ -93,14 +129,17 @@ public class EspaiSeleccionat extends AppCompatActivity {
             public void onResponse(Call<List<Indicacio>> call, Response<List<Indicacio>> response) {
                 if (response.isSuccessful()) {
                     indicacions.addAll(response.body() != null ? response.body() : indicacions);
-                } else {
-                    Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir els espais", Toast.LENGTH_SHORT);
+
+                    indicacionsObtingudes();
+                }
+                else {
+                    Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir les indicacions", Toast.LENGTH_SHORT);
                     toast.show();
                 }
             }
             @Override
             public void onFailure(Call<List<Indicacio>> call, Throwable t) {
-                Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir els espais", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir les indicacions", Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
