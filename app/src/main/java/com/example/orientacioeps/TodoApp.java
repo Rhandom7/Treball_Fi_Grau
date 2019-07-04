@@ -2,6 +2,7 @@ package com.example.orientacioeps;
 
 import android.app.Application;
 
+import com.estimote.proximity_sdk.api.EstimoteCloudCredentials;
 import com.example.orientacioeps.rest.TodoApi;
 import com.example.orientacioeps.util.Global;
 import com.google.gson.Gson;
@@ -31,4 +32,6 @@ public class TodoApp extends Application {
     }
 
     public TodoApi getAPI(){ return mTodoService; }
+
+    public EstimoteCloudCredentials cloudCredentials = new EstimoteCloudCredentials("orientacioeps-1eh", "784275a4e6b12e6e4febf7d8da89cdb9");
 }

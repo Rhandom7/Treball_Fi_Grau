@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i =new Intent(MainActivity.this, EspaiSeleccionat.class);
+                Intent i = new Intent(MainActivity.this, EspaiSeleccionat.class);
                 i.putExtra("EspaiSeleccionat", llistaEspais.get(position).nom);
                 MainActivity.this.startActivity(i);
             }

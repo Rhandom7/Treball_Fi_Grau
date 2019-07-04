@@ -4,4 +4,5 @@
     <string name="dialog_Location_Bluetooth">Perquè funcioni correctament l\'aplicació s\'han d\'activar el Bluetooth i la Localització</string>
     <string name="dialog_Location_Permission">Perquè funcioni correctament l\'aplicació s\'ha de permetre l\'accés a la ubicació del dispositiu</string>
     <string name="dialog_accept">D\'acord</string>
+    <string name="destination">Destinació:</string>
 </resources>
