@@ -264,6 +264,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void dialogLocationBluetooth(){
         new AlertDialog.Builder(this)
             .setMessage(R.string.dialog_Location_Bluetooth)
+            .setCancelable(false)
             .setPositiveButton(R.string.dialog_accept, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -277,6 +278,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void dialogLocationPermission(){
         new AlertDialog.Builder(this)
             .setMessage(R.string.dialog_Location_Permission)
+            .setCancelable(false)
             .setPositiveButton(R.string.dialog_accept, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {

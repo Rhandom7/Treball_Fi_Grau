@@ -1,4 +1,4 @@
-package com.example.orientacioeps.estimote;
+/*package com.example.orientacioeps.estimote;
 
 public class ProximityContent {
 
@@ -15,4 +15,4 @@ public class ProximityContent {
     String getSubtitle() {
         return subtitle;
     }
-}
+}*/

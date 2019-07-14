@@ -4,5 +4,5 @@ import java.util.List;
 
 public class Cami {
     public int id;
-    public List<Integer> cami;
+    public List<Indicacio> cami;
 }
