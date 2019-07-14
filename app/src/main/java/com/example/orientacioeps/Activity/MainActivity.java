@@ -68,11 +68,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Locate the ListView in activity_main.xml
+        //Locate the ListView in activity_main.xml
         list = findViewById(R.id.listview);
 
         mTodoService = ((TodoApp)this.getApplication()).getAPI();
-
 
         mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
         mGoogleApiClient.connect();
@@ -168,15 +167,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         //If Android version is M (6.0 API 23) or newer, check if it has Location permissions
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            /*if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
-            } else {
+            } else {*/
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
-            }
+            //}
         }
     }
 
@@ -184,14 +183,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         //Check if permission request response is from Location
         // If request is cancelled, the result arrays are empty.
         if (requestCode == PERMISSION_REQUEST_COARSE_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 // permission was granted, yay! Do the location-related task you need to do.
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                }
-            } else {
+                //if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {}
+
+
+                mostrarDialogPermissions(R.string.dialog_Location_Permission);
+                //dialogLocationPermission();
+            }
+            /*else {
                 // permission denied, boo! Disable the functionality that depends on this permission.
                 dialogLocationPermission();
-            }
+            }*/
         }
     }
 
@@ -200,11 +203,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CHECK_SETTINGS || requestCode == PERMISSION_REQUEST_COARSE_BL) {
             if (resultCode == RESULT_OK) {
-                Toast.makeText(getApplicationContext(), "Bluetooth i/o Localització activat", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Bluetooth i/o Localització activats", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(getApplicationContext(), "Bluetooth i/o Localització no activat", Toast.LENGTH_LONG).show();
-                dialogLocationBluetooth();
-                //finish();
+                Toast.makeText(getApplicationContext(), "Bluetooth i/o Localització no activats", Toast.LENGTH_LONG).show();
+                mostrarDialogPermissions(R.string.dialog_Location_Bluetooth);
             }
         }
     }
@@ -261,23 +263,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
-    private void dialogLocationBluetooth(){
+    private void mostrarDialogPermissions(int id){
         new AlertDialog.Builder(this)
-            .setMessage(R.string.dialog_Location_Bluetooth)
-            .setCancelable(false)
-            .setPositiveButton(R.string.dialog_accept, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    //Prompt the user once explanation has been shown
-                }
-            })
-            .create()
-            .show();
-    }
-
-    private void dialogLocationPermission(){
-        new AlertDialog.Builder(this)
-            .setMessage(R.string.dialog_Location_Permission)
+            .setMessage(id)
             .setCancelable(false)
             .setPositiveButton(R.string.dialog_accept, new DialogInterface.OnClickListener() {
                 @Override

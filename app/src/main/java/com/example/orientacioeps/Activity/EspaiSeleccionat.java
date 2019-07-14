@@ -2,6 +2,7 @@ package com.example.orientacioeps.Activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -22,10 +23,6 @@ import com.example.orientacioeps.R;
 import com.example.orientacioeps.TodoApp;
 import com.example.orientacioeps.rest.TodoApi;
 
-//import com.example.orientacioeps.estimote.ProximityContentManager;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -41,9 +38,6 @@ public class EspaiSeleccionat extends AppCompatActivity {
     TodoApi mTodoService;
     List<Beacon> beacons = new ArrayList<>();
     List<Cami> camins = new ArrayList<>();
-    List<Indicacio> indicacions = new ArrayList<>();
-
-    //private ProximityContentManager proximityContentManager;
 
     private Context context;
     private EstimoteCloudCredentials cloudCredentials;
@@ -67,14 +61,16 @@ public class EspaiSeleccionat extends AppCompatActivity {
         el = getIntent().getExtras().getString("EspaiSeleccionat");
         TextView text = findViewById(R.id.espaiSelec);
         text.setText(el);
+        text.setTextColor(Color.rgb(0, 0, 0));
 
         obtenirBeacons();
         obtenirCamins();
-        //obtenirIndicacions();
 
         if(primeraVegada){
-            //Todo: Posar una alerta que només es pugui tancar confirmant, avisant que per poder-se orientar correctament cada vegada que canvii el missatge l'usuari
+            //Todo: Posar una alerta que només es pugui tancar confirmant, avisant que per poder-se orientar correctament cada vegada que canviï el missatge l'usuari
             //Todo: ha d'estar davant de la indicació on digui que hi ha un beacon, per tenir l'orientació correcte.
+
+            //Todo: POSAR BOTÓ DE NEVER SHOW AGAIN?
             dialogPosicioUsuari();
             primeraVegada = false;
         }
@@ -82,7 +78,6 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     private void startProximityContentManager() {
-        //proximityContentManager = new ProximityContentManager(this, ((TodoApp) getApplication()).cloudCredentials);
         this.context = this;
         this.cloudCredentials = ((TodoApp) getApplication()).cloudCredentials;
         start();
@@ -116,17 +111,12 @@ public class EspaiSeleccionat extends AppCompatActivity {
 
                         for (ProximityZoneContext proximityContext : contexts) {
                             String title = proximityContext.getAttachments().get("orientacioeps-1eh/title");
-                            /*if (title == null) {
-                                title = "unknown";
-                            }*/
 
-                            //Todo: Posar un if per controlar que el beacon actual sigui diferent a l'anterior? I així hi ha coses que no es van fent cada vegada
-
-                            Log.d("Aprop", title);
+                            Log.d("Aprop", "Beacon: " + title);
                             String beaconActual = proximityContext.getDeviceId();
-                            Log.d("Aprop", beaconActual);
-                            TextView text = findViewById(R.id.llocActual);
-                            text.setText(title);
+                            Log.d("Aprop", "Id beacon " + beaconActual);
+                            //TextView text = findViewById(R.id.llocActual);
+                            //text.setText(title);
                             Log.d("Aprop", "Num de beacon: " + numBeacon(beaconActual));
 
                             //FET (tot i que no és necessari, quan s'arriba al final l'usuari tirarà enrrere per buscar un altre lloc o tancarà l'app
@@ -138,19 +128,25 @@ public class EspaiSeleccionat extends AppCompatActivity {
                             //FET
                             //Todo: POSAR PANTALLA INDICANT QUE S'HA D'ESTAR DE CARA AL BEACON PER VEURE LA DIRECCIÓ CAP ON S'HA D'ANAR
 
+                            //FET (tornar a repassar?)
+                            //Todo: Canviar l'estil de la pantalla, endreçar-ho una mica i fer-ho més entenedor
+
+                            //A mitges
                             //Todo: També posar les frases/text en anglès separant-ho amb una barra o algo per l'estil
 
+                            //No crec que sigui necessari
                             //Todo: Provar-ho per les escales de casa a veure com funciona
-                            //Todo: Canviar l'estil de la pantalla, endreçar-ho una mica i fer-ho més entenedor
 
                             //Todo: DOCUMENTAR EL CODI!!
 
-                            if(!seguintCami) cami = obtenirCamiNou(numBeacon(proximityContext.getDeviceId()), el);
-                            Log.d("Aprop", "El cami te mida: " + cami.size());
+                            if(!seguintCami) {
+                                cami = obtenirCamiNou(numBeacon(proximityContext.getDeviceId()), el);
+                                Log.d("Aprop", "El cami te mida: " + cami.size());
+                            }
 
                             if(numBeacon(beaconActual) == obtenirUltimBeacon(cami)){
-                                missatge.setText("HAS ARRIBAT, L'ESPAI QUE BUSQUES ESTÀ PER LA ZONA");
-                                //Todo: Enlloc de canviar el missatge fer que salti una alerta perquè sigui més visible?
+                                missatge.setText("HAS ARRIBAT, L'ESPAI QUE BUSQUES ESTÀ PER LA ZONA!");
+                                missatge.setTextColor(Color.rgb(0,180,59));
                             }
                             else mostrarIndicacions(numBeacon(beaconActual), cami, missatge);
                         }
@@ -158,21 +154,12 @@ public class EspaiSeleccionat extends AppCompatActivity {
                     }
                 })
                 .build();
-
         proximityObserverHandler = proximityObserver.startObserving(zone);
     }
-
-
 
     public void stop() {
         proximityObserverHandler.stop();
     }
-
-
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////
-
 
     /*private void beaconsObtinguts(){
         Log.d("Dades", "BEACONS");
@@ -195,7 +182,6 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }*/
 
     private void obtenirBeacons(){
-
         Call<List<Beacon>> call = mTodoService.getBeacons();
 
         call.enqueue(new Callback<List<Beacon>>() {
@@ -203,7 +189,6 @@ public class EspaiSeleccionat extends AppCompatActivity {
             public void onResponse(Call<List<Beacon>> call, Response<List<Beacon>> response) {
                 if (response.isSuccessful()) {
                     beacons.addAll(response.body() != null ? response.body() : beacons);
-
                     //beaconsObtinguts();
                 }
                 else {
@@ -228,7 +213,6 @@ public class EspaiSeleccionat extends AppCompatActivity {
             public void onResponse(Call<List<Cami>> call, Response<List<Cami>> response) {
                 if (response.isSuccessful()) {
                     camins.addAll(response.body() != null ? response.body() : camins);
-
                     //caminsObtinguts();
                 }
                 else {
@@ -250,6 +234,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
         while(i < cami.size() && !trobat){
             if(cami.get(i).origen == numBeacon){
                 missatge.setText(cami.get(i).missatge);
+                missatge.setTextColor(Color.rgb(0, 0, 0));
                 Log.d("Aprop", "Cami a seguir: " + cami.get(i).missatge);
                 trobat = true;
             }
@@ -263,10 +248,10 @@ public class EspaiSeleccionat extends AppCompatActivity {
         return numBeacon;
     }
 
-
     private int numBeacon(String idBeacon){
         int num = 0, i = 0;
         boolean trobat = false;
+
         while(i < beacons.size() && !trobat){
             if(beacons.get(i).codi.equals(idBeacon)) {
                 num = beacons.get(i).id;
@@ -279,19 +264,22 @@ public class EspaiSeleccionat extends AppCompatActivity {
 
     private List<Indicacio> obtenirCamiNou(int idBeaconActual, String destinacio){
         int idDestinacio = 0;
+        int i = 0, j = 0, midaCami = 0;
+        boolean trobat = false;
         List<Indicacio> cami = new ArrayList<>();
 
         idDestinacio = obtenirIdBeaconPerDestinacio(destinacio);
-        int i = 0, mida = 0;
-        boolean trobat = false;
+
         while (i < camins.size() && !trobat){
-            mida = camins.get(i).cami.size();
-            //Todo: Canviar-ho per contemplar el cas que estigui aprop d'un beacon del mig del camí, ara mateix només miro el cas que estigui aprop del primer beacon d'un camí
-            //Todo: IMPORTANT FER AQUEST CANVI, CAL RECÓRRER EL CAMÍ QUE ESTIC MIRANT PER VEURE SI ESTIC EN UN BEACON DEL MIG DEL CAMÍ
-            if(camins.get(i).cami.get(0).origen == idBeaconActual && camins.get(i).cami.get(mida-1).desti == idDestinacio){
-                cami = camins.get(i).cami;
-                trobat = true;
-                seguintCami = true;
+            midaCami = camins.get(i).cami.size();
+
+            while(j < midaCami && !trobat){
+                if(camins.get(i).cami.get(j).origen == idBeaconActual && camins.get(i).cami.get(midaCami-1).desti == idDestinacio){
+                    cami = camins.get(i).cami;
+                    trobat = true;
+                    seguintCami = true;
+                }
+                j++;
             }
             i++;
         }
@@ -301,6 +289,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     private int obtenirIdBeaconPerDestinacio(String destinacio){
         int id = 0, i = 0;
         boolean trobat = false;
+
         while(i < beacons.size() && !trobat){
             if(beacons.get(i).espais.contains(destinacio)){
                 id = beacons.get(i).id;
@@ -326,6 +315,4 @@ public class EspaiSeleccionat extends AppCompatActivity {
             .create()
             .show();
     }
-
-
 }

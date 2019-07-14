@@ -17,16 +17,14 @@ import java.util.Locale;
 
 public class ListViewAdapter extends BaseAdapter {
 
-    // Declare Variables
-    Context mContext;
-    LayoutInflater inflater;
+    private LayoutInflater inflater;
     private List<Espai> llistaEspais;
     private ArrayList<Espai> arraylist;
 
     public ListViewAdapter(Context context, List<Espai> espais) {
-        mContext = context;
+        // Declare Variables
         this.llistaEspais = espais;
-        inflater = LayoutInflater.from(mContext);
+        inflater = LayoutInflater.from(context);
         this.arraylist = new ArrayList<>();
         this.arraylist.addAll(espais);
     }
@@ -56,7 +54,7 @@ public class ListViewAdapter extends BaseAdapter {
             holder = new ViewHolder();
             view = inflater.inflate(R.layout.list_view_items, null);
             // Locate the TextViews in list_view_items.xml
-            holder.name = (TextView) view.findViewById(R.id.espai);
+            holder.name = view.findViewById(R.id.espai);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
