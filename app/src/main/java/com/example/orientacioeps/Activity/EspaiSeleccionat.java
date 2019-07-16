@@ -33,12 +33,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/** @file Alien.java
- * @brief Classe Alien
- */
 
-/** @class Alien
- * @brief Tipus de personatge que té com a objectiu eliminar humans i fugir de trolls. Només pot recollir claus.
+/** @class EspaiSeleccionat
+ * @brief
  * @author Genís Arumí Novellas
  */
 public class EspaiSeleccionat extends AppCompatActivity {
@@ -59,10 +56,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
 
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -92,10 +86,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     private void startProximityContentManager() {
         this.context = this;
@@ -104,10 +95,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     @Override
     protected void onDestroy() {
@@ -116,88 +104,81 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     public void start() {
-
         ProximityObserver proximityObserver = new ProximityObserverBuilder(context, cloudCredentials)
-                .onError(new Function1<Throwable, Unit>() {
-                    @Override
-                    public Unit invoke(Throwable throwable) {
-                        Log.e("app", "proximity observer error: " + throwable);
-                        return null;
-                    }
-                })
-                .withBalancedPowerMode()
-                .build();
+            .onError(new Function1<Throwable, Unit>() {
+                @Override
+                public Unit invoke(Throwable throwable) {
+                    Log.e("app", "proximity observer error: " + throwable);
+                    return null;
+                }
+            })
+            .withBalancedPowerMode()
+            .build();
 
         ProximityZone zone = new ProximityZoneBuilder()
-                .forTag("orientacioeps-1eh")
-                .inCustomRange(5.0)
-                .onContextChange(new Function1<Set<? extends ProximityZoneContext>, Unit>() {
-                    @Override
-                    public Unit invoke(Set<? extends ProximityZoneContext> contexts) {
+            .forTag("orientacioeps-1eh")
+            .inCustomRange(5.0)
+            .onContextChange(new Function1<Set<? extends ProximityZoneContext>, Unit>() {
+                @Override
+                public Unit invoke(Set<? extends ProximityZoneContext> contexts) {
 
-                        for (ProximityZoneContext proximityContext : contexts) {
-                            String title = proximityContext.getAttachments().get("orientacioeps-1eh/title");
+                for (ProximityZoneContext proximityContext : contexts) {
+                    String title = proximityContext.getAttachments().get("orientacioeps-1eh/title");
 
-                            Log.d("Aprop", "Beacon: " + title);
-                            String beaconActual = proximityContext.getDeviceId();
-                            Log.d("Aprop", "Id beacon " + beaconActual);
-                            //TextView text = findViewById(R.id.llocActual);
-                            //text.setText(title);
-                            Log.d("Aprop", "Num de beacon: " + numBeacon(beaconActual));
+                    Log.d("Aprop", "Beacon: " + title);
+                    String beaconActual = proximityContext.getDeviceId();
+                    Log.d("Aprop", "Id beacon " + beaconActual);
+                    //TextView text = findViewById(R.id.llocActual);
+                    //text.setText(title);
+                    Log.d("Aprop", "Num de beacon: " + numBeacon(beaconActual));
 
-                            //FET (tot i que no és necessari, quan s'arriba al final l'usuari tirarà enrrere per buscar un altre lloc o tancarà l'app
-                            //Todo: Falta fer un mètode que comprovi si estic al final d'un camí per posar la variable seguintCami a fals.
+                    //FET (tot i que no és necessari, quan s'arriba al final l'usuari tirarà enrrere per buscar un altre lloc o tancarà l'app
+                    //Todo: Falta fer un mètode que comprovi si estic al final d'un camí per posar la variable seguintCami a fals.
 
-                            //FET
-                            //Todo: També comprovar si el beacon on estic és l'últim beacon del camí per poder indicar a l'usuari que ha arribat al lloc que buscava
+                    //FET
+                    //Todo: També comprovar si el beacon on estic és l'últim beacon del camí per poder indicar a l'usuari que ha arribat al lloc que buscava
 
-                            //FET
-                            //Todo: POSAR PANTALLA INDICANT QUE S'HA D'ESTAR DE CARA AL BEACON PER VEURE LA DIRECCIÓ CAP ON S'HA D'ANAR
+                    //FET
+                    //Todo: POSAR PANTALLA INDICANT QUE S'HA D'ESTAR DE CARA AL BEACON PER VEURE LA DIRECCIÓ CAP ON S'HA D'ANAR
 
-                            //FET (tornar a repassar?)
-                            //Todo: Canviar l'estil de la pantalla, endreçar-ho una mica i fer-ho més entenedor
+                    //FET (tornar a repassar?)
+                    //Todo: Canviar l'estil de la pantalla, endreçar-ho una mica i fer-ho més entenedor
 
-                            //A mitges
-                            //Todo: També posar les frases/text en anglès separant-ho amb una barra o algo per l'estil
+                    //A mitges
+                    //Todo: També posar les frases/text en anglès separant-ho amb una barra o algo per l'estil
 
-                            //No crec que sigui necessari
-                            //Todo: Provar-ho per les escales de casa a veure com funciona
-
-
-                            //Todo: Aclarir el missatge que indica als usuaris que s'han de posar de cara a la senyal per obtenir les direccions correctes
+                    //No crec que sigui necessari
+                    //Todo: Provar-ho per les escales de casa a veure com funciona
 
 
-                            //Todo: DOCUMENTAR EL CODI!!
+                    //Todo: Aclarir el missatge que indica als usuaris que s'han de posar de cara a la senyal per obtenir les direccions correctes
 
-                            if(!seguintCami) {
-                                cami = obtenirCamiNou(numBeacon(proximityContext.getDeviceId()), espaiSeleccionat);
-                                Log.d("Aprop", "El cami te mida: " + cami.size());
-                            }
+                    //A mitges
+                    //Todo: DOCUMENTAR EL CODI!!
 
-                            if(numBeacon(beaconActual) == obtenirUltimBeacon(cami)){
-                                missatge.setText("HAS ARRIBAT, L'ESPAI QUE BUSQUES ESTÀ PER LA ZONA!");
-                                missatge.setTextColor(Color.rgb(0,180,59));
-                            }
-                            else mostrarIndicacions(numBeacon(beaconActual), cami, missatge);
-                        }
-                        return null;
+                    if(!seguintCami) {
+                        cami = obtenirCamiNou(numBeacon(proximityContext.getDeviceId()), espaiSeleccionat);
+                        Log.d("Aprop", "El cami te mida: " + cami.size());
                     }
-                })
-                .build();
+
+                    if(numBeacon(beaconActual) == obtenirUltimBeacon(cami)){
+                        missatge.setText("HAS ARRIBAT, L'ESPAI QUE BUSQUES ESTÀ PER LA ZONA!");
+                        missatge.setTextColor(Color.rgb(0,180,59));
+                    }
+                    else mostrarIndicacions(numBeacon(beaconActual), cami, missatge);
+                }
+                return null;
+                }
+            })
+            .build();
         proximityObserverHandler = proximityObserver.startObserving(zone);
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     public void stop() {
         proximityObserverHandler.stop();
@@ -224,10 +205,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }*/
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     private void obtenirBeacons(){
         Call<List<Beacon>> call = mTodoService.getBeacons();
@@ -254,10 +232,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     private void obtenirCamins(){
         Call<List<Cami>> call = mTodoService.getCamins();
@@ -283,10 +258,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     private void mostrarIndicacions(int numBeacon, List<Indicacio> cami, TextView missatge) {
         int i = 0;
@@ -303,10 +275,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     private int obtenirUltimBeacon(List<Indicacio> cami){
         int numBeacon;
@@ -315,10 +284,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     private int numBeacon(String idBeacon){
         int num = 0, i = 0;
@@ -335,10 +301,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     private List<Indicacio> obtenirCamiNou(int idBeaconActual, String destinacio){
         int idDestinacio = 0;
@@ -365,10 +328,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     private int obtenirIdBeaconPerDestinacio(String destinacio){
         int id = 0, i = 0;
@@ -385,10 +345,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     private void dialogPosicioUsuari(){
         new AlertDialog.Builder(this)

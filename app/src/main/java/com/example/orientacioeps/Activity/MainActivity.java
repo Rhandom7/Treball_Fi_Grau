@@ -33,7 +33,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -45,16 +44,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
-/** @file MainActivity.java
- * @brief Classe inicial de l'aplicació
- */
 
 /** @class MainActivity
- * @brief Classe inicial que s'encarrega de mostrar el llistat d'espais a cercar i a filtrar.
+ * @brief Classe inicial que s'encarrega de mostrar el llistat d'espais a cercar i a filtrar i de demanar permisos a l'usuari per accedir i activar el Bluetooth i la Localitació.
  * @author Genís Arumí Novellas
  */
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback {
-    
+
     private TodoApi mTodoService; ///< Encarregat de fer crides al servidor
     private ListView list; ///< Controla la llista d'espais
     private ListViewAdapter adapter; ///< Adaptador de la llista d'espais
@@ -65,22 +61,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1; ///< Permís de la localització
     private static final int PERMISSION_REQUEST_COARSE_BL = 2; ///< Permís de bluetooth
 
-    protected GoogleApiClient mGoogleApiClient; ///<
-    protected LocationRequest locationRequest; ///<
-    int REQUEST_CHECK_SETTINGS = 100; ///<
+    protected GoogleApiClient mGoogleApiClient; ///< Per demanar permisos de localització
+    protected LocationRequest locationRequest; ///< Per crear la petició per demanar permisos de localització
+    int REQUEST_CHECK_SETTINGS = 100; ///< Valor per defecte per controlar el resultat quan es demana per activar bluetooth i localització
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * Crea la pantalla inicial de l'aplicació, inicialitza les variables principals, demana a l'usuari activar Bluetooth i/o Localització i obté la llista d'espais disponibles
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Locate the ListView in activity_main.xml
         list = findViewById(R.id.llistaEspais);
 
         mTodoService = ((TodoApp)this.getApplication()).getAPI();
@@ -109,10 +101,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * Obté la llista d'espais disponibles del servidor
      */
     private void obtenirEspais(){
         Call<List<Espai>> call = mTodoService.getEspais();
@@ -124,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     llistaEspais.addAll(response.body() != null ? response.body() : llistaEspais);
                     adapter = new ListViewAdapter(MainActivity.this, llistaEspais);
                     list.setAdapter(adapter);
+
                     editSearch = findViewById(R.id.search);
                     editSearch.setOnQueryTextListener(MainActivity.this);
                 } else {
@@ -140,10 +130,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * --
      */
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -151,10 +138,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * Informa a l'adaptador de la llista d'espais el text que ha escrit l'usuari per filtrar la llista
      */
     @Override
     public boolean onQueryTextChange(String newText) {
@@ -163,10 +147,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * Demana a l'usuari si vol activar el Bluetooth
      */
     private void initializeBluetooth(){
         //Check if device does support BT by hardware
@@ -200,10 +181,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * Demana a l'usuari si vol activar la Localització
      */
     private void initializeLocation(){
         //If Android version is M (6.0 API 23) or newer, check if it has Location permissions
@@ -222,10 +200,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * Es crida després que l'usuari hagi acceptat o rebutjat els permisos de Localització. Si ha rebutjat es mostra un missatge informant sobre els permisos
      */
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //Check if permission request response is from Location
@@ -247,10 +222,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * S'invoca després que l'usuari hagi acceptat o rebutjat l'activació del Bluetooth i/o la Localització
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -266,10 +238,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * Mètode que es crida quan es posa l'aplicació en foreground
      */
     @Override
     protected void onResume() {
@@ -278,10 +247,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * Mètode que es crida quan es posa l'aplicació en background
      */
     @Override
     protected void onPause() {
@@ -290,10 +256,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * Si l'usuari accepta els permisos i activació de Localització, s'activa la Localització
      */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -304,10 +267,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * --
      */
     @Override
     public void onConnectionSuspended(int i) {
@@ -315,10 +275,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * --
      */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -326,10 +283,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     *
      */
     @Override
     public void onResult(@NonNull Result result) {
@@ -354,10 +308,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * @brief
-     * @pre
-     * @post
-     * @param
+     * Crea una finestra amb un text i un botó d'acceptar, que informa a l'usuari per què es necessita el Bluetooth i la Localització
      */
     private void mostrarDialogPermissions(int id){
         new AlertDialog.Builder(this)
