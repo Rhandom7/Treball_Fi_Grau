@@ -45,31 +45,43 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
+/** @file MainActivity.java
+ * @brief Classe inicial de l'aplicació
+ */
 
+/** @class MainActivity
+ * @brief Classe inicial que s'encarrega de mostrar el llistat d'espais a cercar i a filtrar.
+ * @author Genís Arumí Novellas
+ */
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback {
+    
+    private TodoApi mTodoService; ///< Encarregat de fer crides al servidor
+    private ListView list; ///< Controla la llista d'espais
+    private ListViewAdapter adapter; ///< Adaptador de la llista d'espais
+    private SearchView editSearch; ///< Controla la barra de filtrat
 
-    //Variables
-    TodoApi mTodoService;
-    ListView list;
-    ListViewAdapter adapter;
-    SearchView editsearch;
+    List<Espai> llistaEspais = new ArrayList<>(); ///< Llista d'espais a cercar
 
-    List<Espai> llistaEspais = new ArrayList<>();
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1; ///< Permís de la localització
+    private static final int PERMISSION_REQUEST_COARSE_BL = 2; ///< Permís de bluetooth
 
-    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
-    private static final int PERMISSION_REQUEST_COARSE_BL = 2;
+    protected GoogleApiClient mGoogleApiClient; ///<
+    protected LocationRequest locationRequest; ///<
+    int REQUEST_CHECK_SETTINGS = 100; ///<
 
-    protected GoogleApiClient mGoogleApiClient;
-    protected LocationRequest locationRequest;
-    int REQUEST_CHECK_SETTINGS = 100;
-
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         //Locate the ListView in activity_main.xml
-        list = findViewById(R.id.listview);
+        list = findViewById(R.id.llistaEspais);
 
         mTodoService = ((TodoApp)this.getApplication()).getAPI();
 
@@ -96,6 +108,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         });
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     private void obtenirEspais(){
         Call<List<Espai>> call = mTodoService.getEspais();
 
@@ -106,8 +124,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     llistaEspais.addAll(response.body() != null ? response.body() : llistaEspais);
                     adapter = new ListViewAdapter(MainActivity.this, llistaEspais);
                     list.setAdapter(adapter);
-                    editsearch = findViewById(R.id.search);
-                    editsearch.setOnQueryTextListener(MainActivity.this);
+                    editSearch = findViewById(R.id.search);
+                    editSearch.setOnQueryTextListener(MainActivity.this);
                 } else {
                     Toast toast = Toast.makeText(MainActivity.this, "Error intentant obtenir els espais", Toast.LENGTH_SHORT);
                     toast.show();
@@ -121,17 +139,35 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         });
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     @Override
     public boolean onQueryTextSubmit(String query) {
         return false;
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     @Override
     public boolean onQueryTextChange(String newText) {
         adapter.filter(newText);
         return false;
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     private void initializeBluetooth(){
         //Check if device does support BT by hardware
         if (!getBaseContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)) {
@@ -163,6 +199,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     private void initializeLocation(){
         //If Android version is M (6.0 API 23) or newer, check if it has Location permissions
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -179,6 +221,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //Check if permission request response is from Location
         // If request is cancelled, the result arrays are empty.
@@ -198,6 +246,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -211,18 +265,36 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     @Override
     protected void onResume() {
         super.onResume();
         //if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {}
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     @Override
     protected void onPause() {
         super.onPause();
         //if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {}
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
@@ -231,16 +303,34 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         result.setResultCallback(this);
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     @Override
     public void onConnectionSuspended(int i) {
 
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     @Override
     public void onResult(@NonNull Result result) {
         final Status status = result.getStatus();
@@ -263,6 +353,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     private void mostrarDialogPermissions(int id){
         new AlertDialog.Builder(this)
             .setMessage(id)

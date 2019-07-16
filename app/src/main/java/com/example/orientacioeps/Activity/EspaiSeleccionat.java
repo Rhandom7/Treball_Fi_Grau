@@ -33,23 +33,37 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/** @file Alien.java
+ * @brief Classe Alien
+ */
+
+/** @class Alien
+ * @brief Tipus de personatge que té com a objectiu eliminar humans i fugir de trolls. Només pot recollir claus.
+ * @author Genís Arumí Novellas
+ */
 public class EspaiSeleccionat extends AppCompatActivity {
 
-    TodoApi mTodoService;
-    List<Beacon> beacons = new ArrayList<>();
-    List<Cami> camins = new ArrayList<>();
+    TodoApi mTodoService; ///<
+    List<Beacon> beacons = new ArrayList<>(); ///<
+    List<Cami> camins = new ArrayList<>(); ///<
 
-    private Context context;
-    private EstimoteCloudCredentials cloudCredentials;
-    private ProximityObserver.Handler proximityObserverHandler;
-    private String el = "";
-    private boolean seguintCami = false;
-    private List<Indicacio> cami = new ArrayList<>();
+    private Context context; ///<
+    private EstimoteCloudCredentials cloudCredentials; ///<
+    private ProximityObserver.Handler proximityObserverHandler; ///<
+    private String espaiSeleccionat = ""; ///<
+    private boolean seguintCami = false; ///<
+    private List<Indicacio> cami = new ArrayList<>(); ///<
 
-    TextView missatge;
-    private boolean primeraVegada = true;
+    TextView missatge; ///<
+    private boolean primeraVegada = true; ///<
 
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -58,9 +72,9 @@ public class EspaiSeleccionat extends AppCompatActivity {
 
         mTodoService = ((TodoApp)this.getApplication()).getAPI();
 
-        el = getIntent().getExtras().getString("EspaiSeleccionat");
+        espaiSeleccionat = getIntent().getExtras().getString("EspaiSeleccionat");
         TextView text = findViewById(R.id.espaiSelec);
-        text.setText(el);
+        text.setText(espaiSeleccionat);
         text.setTextColor(Color.rgb(0, 0, 0));
 
         obtenirBeacons();
@@ -77,18 +91,36 @@ public class EspaiSeleccionat extends AppCompatActivity {
         //startProximityContentManager();
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     private void startProximityContentManager() {
         this.context = this;
         this.cloudCredentials = ((TodoApp) getApplication()).cloudCredentials;
         start();
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (this != null) stop();
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     public void start() {
 
         ProximityObserver proximityObserver = new ProximityObserverBuilder(context, cloudCredentials)
@@ -137,10 +169,14 @@ public class EspaiSeleccionat extends AppCompatActivity {
                             //No crec que sigui necessari
                             //Todo: Provar-ho per les escales de casa a veure com funciona
 
+
+                            //Todo: Aclarir el missatge que indica als usuaris que s'han de posar de cara a la senyal per obtenir les direccions correctes
+
+
                             //Todo: DOCUMENTAR EL CODI!!
 
                             if(!seguintCami) {
-                                cami = obtenirCamiNou(numBeacon(proximityContext.getDeviceId()), el);
+                                cami = obtenirCamiNou(numBeacon(proximityContext.getDeviceId()), espaiSeleccionat);
                                 Log.d("Aprop", "El cami te mida: " + cami.size());
                             }
 
@@ -157,6 +193,12 @@ public class EspaiSeleccionat extends AppCompatActivity {
         proximityObserverHandler = proximityObserver.startObserving(zone);
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     public void stop() {
         proximityObserverHandler.stop();
     }
@@ -181,6 +223,12 @@ public class EspaiSeleccionat extends AppCompatActivity {
         Log.d("Dades", "-------------------------------");
     }*/
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     private void obtenirBeacons(){
         Call<List<Beacon>> call = mTodoService.getBeacons();
 
@@ -205,6 +253,12 @@ public class EspaiSeleccionat extends AppCompatActivity {
         });
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     private void obtenirCamins(){
         Call<List<Cami>> call = mTodoService.getCamins();
 
@@ -228,6 +282,12 @@ public class EspaiSeleccionat extends AppCompatActivity {
         });
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     private void mostrarIndicacions(int numBeacon, List<Indicacio> cami, TextView missatge) {
         int i = 0;
         boolean trobat = false;
@@ -242,12 +302,24 @@ public class EspaiSeleccionat extends AppCompatActivity {
         }
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     private int obtenirUltimBeacon(List<Indicacio> cami){
         int numBeacon;
         numBeacon = cami.get(cami.size()-1).desti;
         return numBeacon;
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     private int numBeacon(String idBeacon){
         int num = 0, i = 0;
         boolean trobat = false;
@@ -262,6 +334,12 @@ public class EspaiSeleccionat extends AppCompatActivity {
         return num;
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     private List<Indicacio> obtenirCamiNou(int idBeaconActual, String destinacio){
         int idDestinacio = 0;
         int i = 0, j = 0, midaCami = 0;
@@ -286,6 +364,12 @@ public class EspaiSeleccionat extends AppCompatActivity {
         return cami;
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     private int obtenirIdBeaconPerDestinacio(String destinacio){
         int id = 0, i = 0;
         boolean trobat = false;
@@ -300,6 +384,12 @@ public class EspaiSeleccionat extends AppCompatActivity {
         return id;
     }
 
+    /**
+     * @brief
+     * @pre
+     * @post
+     * @param
+     */
     private void dialogPosicioUsuari(){
         new AlertDialog.Builder(this)
             .setTitle(R.string.atencio)

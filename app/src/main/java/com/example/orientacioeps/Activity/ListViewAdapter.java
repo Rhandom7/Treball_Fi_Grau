@@ -15,11 +15,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/** @file Alien.java
+ * @brief Classe Alien
+ */
+
+/** @class Alien
+ * @brief Tipus de personatge que té com a objectiu eliminar humans i fugir de trolls. Només pot recollir claus.
+ * @author Genís Arumí Novellas
+ */
 public class ListViewAdapter extends BaseAdapter {
 
-    private LayoutInflater inflater;
-    private List<Espai> llistaEspais;
-    private ArrayList<Espai> arraylist;
+    private LayoutInflater inflater; ///<
+    private List<Espai> llistaEspais; ///<
+    private ArrayList<Espai> arraylist; ///<
 
     public ListViewAdapter(Context context, List<Espai> espais) {
         // Declare Variables

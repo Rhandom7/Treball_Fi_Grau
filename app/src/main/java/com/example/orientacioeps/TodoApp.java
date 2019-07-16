@@ -11,8 +11,16 @@ import com.google.gson.GsonBuilder;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/** @file Alien.java
+ * @brief Classe Alien
+ */
+
+/** @class Alien
+ * @brief Tipus de personatge que té com a objectiu eliminar humans i fugir de trolls. Només pot recollir claus.
+ * @author Genís Arumí Novellas
+ */
 public class TodoApp extends Application {
-    TodoApi mTodoService;
+    TodoApi mTodoService; ///<
 
     @Override
     public void onCreate() {
