@@ -2,15 +2,11 @@ package com.example.orientacioeps.Entity;
 
 import java.util.List;
 
-/** @file Alien.java
- * @brief Classe Alien
- */
-
-/** @class Alien
- * @brief Tipus de personatge que té com a objectiu eliminar humans i fugir de trolls. Només pot recollir claus.
+/** @class Cami
+ * @brief Conté els atributs propis d'un Camí
  * @author Genís Arumí Novellas
  */
 public class Cami {
-    public int id; ///<
-    public List<Indicacio> cami; ///<
+    public int id; ///< Id del Camí al servidor
+    public List<Indicacio> cami; ///< Llista que conté tot un Camí amb Indicacions
 }

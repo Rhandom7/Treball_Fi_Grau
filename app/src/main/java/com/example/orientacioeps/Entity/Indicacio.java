@@ -1,15 +1,11 @@
 package com.example.orientacioeps.Entity;
 
-/** @file Alien.java
- * @brief Classe Alien
- */
-
-/** @class Alien
- * @brief Tipus de personatge que té com a objectiu eliminar humans i fugir de trolls. Només pot recollir claus.
+/** @class Indicacio
+ * @brief Conté els atributs propis d'una Indicació
  * @author Genís Arumí Novellas
  */
 public class Indicacio {
-    public int origen; ///<
-    public int desti; ///<
-    public String missatge; ///<
+    public int origen; ///< Id del Beacon "origen"
+    public int desti; ///< Id del Beacon "desti"
+    public String missatge; ///< Missatge per indicar com arribar del beacon "origen" al beacon "desti"
 }

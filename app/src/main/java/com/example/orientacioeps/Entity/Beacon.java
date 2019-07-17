@@ -2,18 +2,14 @@ package com.example.orientacioeps.Entity;
 
 import java.util.List;
 
-/** @file Alien.java
- * @brief Classe Alien
- */
-
-/** @class Alien
- * @brief Tipus de personatge que té com a objectiu eliminar humans i fugir de trolls. Només pot recollir claus.
+/** @class Beacon
+ * @brief Conté els atributs propis d'un Beacon
  * @author Genís Arumí Novellas
  */
 public class Beacon {
-    public int id; ///<
-    public String codi; ///<
-    public int pis; ///<
-    public String edifici; ///<
-    public List<String> espais; ///<
+    public int id; ///< Identificador del beacon al servidor
+    public String codi; ///< Id pròpia del beacon
+    public int pis; ///< Pis on està el beacon
+    public String edifici; ///< Edifici on es troba el beacon
+    public List<String> espais; ///< Espais/destinacions que té aprop el beacon
 }

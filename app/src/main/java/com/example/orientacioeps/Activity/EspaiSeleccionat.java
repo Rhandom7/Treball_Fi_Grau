@@ -35,28 +35,29 @@ import retrofit2.Response;
 
 
 /** @class EspaiSeleccionat
- * @brief
+ * @brief Activity encarregada de gestionar el funcionament principal de l'aplicació, obtenint totes les dades del servidor i indicant les direccions a seguir per l'usuari
  * @author Genís Arumí Novellas
  */
 public class EspaiSeleccionat extends AppCompatActivity {
 
-    TodoApi mTodoService; ///<
-    List<Beacon> beacons = new ArrayList<>(); ///<
-    List<Cami> camins = new ArrayList<>(); ///<
+    TodoApi mTodoService; ///< Encarregat de fer crides al servidor
+    List<Beacon> beacons = new ArrayList<>(); ///< Llista de beacons obtinguts del servidor
+    List<Cami> camins = new ArrayList<>(); ///< Llista de camins obtinguts del servidor
 
-    private Context context; ///<
-    private EstimoteCloudCredentials cloudCredentials; ///<
-    private ProximityObserver.Handler proximityObserverHandler; ///<
-    private String espaiSeleccionat = ""; ///<
-    private boolean seguintCami = false; ///<
-    private List<Indicacio> cami = new ArrayList<>(); ///<
+    private Context context; ///< Guarda el context d'aquesta activity
+    private EstimoteCloudCredentials cloudCredentials; ///< Guarda les credencials de l'aplicació que permeten treballar amb els beacons
+    private ProximityObserver.Handler proximityObserverHandler; ///< Ajuda a gestionar el comportament del servei utilitzat per detectar beacons
+    private String espaiSeleccionat = ""; ///< Espai que ha seleccionat l'usuari a l'activity inicial
+    private boolean seguintCami = false; ///< Indica si l'usuari ja està seguint un camí
+    private List<Indicacio> cami = new ArrayList<>(); ///< Guarda el camí que segueix l'usuari en un moment donat
 
-    TextView missatge; ///<
-    private boolean primeraVegada = true; ///<
+    TextView missatge; ///< Utilitzada per escriure per pantalla les indicacions a seguir per l'usuari
+
+    //private boolean primeraVegada = true; ///< Indica si és la primera vegada que l'usuari utilitza l'aplicació per guiar-se
 
 
     /**
-     *
+     * Crea la pantalla principal de l'aplicació, inicialitza les variables principals i obté totes les dades restants del servidor: beacons i camins
      */
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -69,24 +70,24 @@ public class EspaiSeleccionat extends AppCompatActivity {
         espaiSeleccionat = getIntent().getExtras().getString("EspaiSeleccionat");
         TextView text = findViewById(R.id.espaiSelec);
         text.setText(espaiSeleccionat);
-        text.setTextColor(Color.rgb(0, 0, 0));
+        //text.setTextColor(Color.rgb(0, 0, 0));
 
         obtenirBeacons();
         obtenirCamins();
 
-        if(primeraVegada){
+        //if(primeraVegada){
             //Todo: Posar una alerta que només es pugui tancar confirmant, avisant que per poder-se orientar correctament cada vegada que canviï el missatge l'usuari
             //Todo: ha d'estar davant de la indicació on digui que hi ha un beacon, per tenir l'orientació correcte.
 
             //Todo: POSAR BOTÓ DE NEVER SHOW AGAIN?
             dialogPosicioUsuari();
-            primeraVegada = false;
-        }
+            //primeraVegada = false;
+        //}
         //startProximityContentManager();
     }
 
     /**
-     *
+     * Inicialitza l'encarregat de gestionar el servei que s'utilitzarà per detectar beacons i es guarda les credencials de l'aplicació per poder treballar amb els beacons
      */
     private void startProximityContentManager() {
         this.context = this;
@@ -95,7 +96,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     *
+     * Para el servei encarregat de detectar beacons i destrueix l'activity
      */
     @Override
     protected void onDestroy() {
@@ -104,7 +105,8 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     *
+     * Inicia el comportament principal de l'aplicació que permet detectar beacons i obtenir-ne les seves dades. Mostra les indicacions a seguir per l'usuari
+     * segons el beacon detectat i la destinació final escollida anteriorment per l'usuari.
      */
     public void start() {
         ProximityObserver proximityObserver = new ProximityObserverBuilder(context, cloudCredentials)
@@ -135,32 +137,13 @@ public class EspaiSeleccionat extends AppCompatActivity {
                     //text.setText(title);
                     Log.d("Aprop", "Num de beacon: " + numBeacon(beaconActual));
 
-                    //FET (tot i que no és necessari, quan s'arriba al final l'usuari tirarà enrrere per buscar un altre lloc o tancarà l'app
-                    //Todo: Falta fer un mètode que comprovi si estic al final d'un camí per posar la variable seguintCami a fals.
-
-                    //FET
-                    //Todo: També comprovar si el beacon on estic és l'últim beacon del camí per poder indicar a l'usuari que ha arribat al lloc que buscava
-
-                    //FET
-                    //Todo: POSAR PANTALLA INDICANT QUE S'HA D'ESTAR DE CARA AL BEACON PER VEURE LA DIRECCIÓ CAP ON S'HA D'ANAR
-
-                    //FET (tornar a repassar?)
-                    //Todo: Canviar l'estil de la pantalla, endreçar-ho una mica i fer-ho més entenedor
-
                     //A mitges
                     //Todo: També posar les frases/text en anglès separant-ho amb una barra o algo per l'estil
 
-                    //No crec que sigui necessari
-                    //Todo: Provar-ho per les escales de casa a veure com funciona
-
-
                     //Todo: Aclarir el missatge que indica als usuaris que s'han de posar de cara a la senyal per obtenir les direccions correctes
 
-                    //A mitges
-                    //Todo: DOCUMENTAR EL CODI!!
-
                     if(!seguintCami) {
-                        cami = obtenirCamiNou(numBeacon(proximityContext.getDeviceId()), espaiSeleccionat);
+                        cami = obtenirCami(numBeacon(proximityContext.getDeviceId()), espaiSeleccionat);
                         Log.d("Aprop", "El cami te mida: " + cami.size());
                     }
 
@@ -178,7 +161,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     *
+     * Para el servei encarregat de gestionar beacons
      */
     public void stop() {
         proximityObserverHandler.stop();
@@ -205,7 +188,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }*/
 
     /**
-     *
+     * Obté la llista de beacons del servidor i els guarda
      */
     private void obtenirBeacons(){
         Call<List<Beacon>> call = mTodoService.getBeacons();
@@ -232,7 +215,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     *
+     * Obté la llista de camins del servidor i els guarda
      */
     private void obtenirCamins(){
         Call<List<Cami>> call = mTodoService.getCamins();
@@ -258,7 +241,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     *
+     * Mostra per pantalla les indicacions que ha de seguir l'usuari per arribar a la destinació escollida
      */
     private void mostrarIndicacions(int numBeacon, List<Indicacio> cami, TextView missatge) {
         int i = 0;
@@ -275,7 +258,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     *
+     * Obté l'últim beacon del camí especificat
      */
     private int obtenirUltimBeacon(List<Indicacio> cami){
         int numBeacon;
@@ -284,7 +267,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     *
+     * Obté la id interna del beacon al servidor segons la seva id detectada
      */
     private int numBeacon(String idBeacon){
         int num = 0, i = 0;
@@ -301,9 +284,9 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     *
+     * Obté el camí que ha de seguir l'usuari segons el beacon on es troba i la destinació que ha escollit
      */
-    private List<Indicacio> obtenirCamiNou(int idBeaconActual, String destinacio){
+    private List<Indicacio> obtenirCami(int idBeaconActual, String destinacio){
         int idDestinacio = 0;
         int i = 0, j = 0, midaCami = 0;
         boolean trobat = false;
@@ -328,7 +311,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     *
+     * Obté la id del beacon al servidor segons la destinació (espai) especificada
      */
     private int obtenirIdBeaconPerDestinacio(String destinacio){
         int id = 0, i = 0;
@@ -345,7 +328,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     *
+     * Mostra per pantalla un missatge que explica a l'usuari com ha d'utilitzar l'aplicació i col·locar-se per tal de poder seguir correctament les indicacions
      */
     private void dialogPosicioUsuari(){
         new AlertDialog.Builder(this)

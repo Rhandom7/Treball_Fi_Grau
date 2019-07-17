@@ -46,7 +46,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 
 /** @class MainActivity
- * @brief Classe inicial que s'encarrega de mostrar el llistat d'espais a cercar i a filtrar i de demanar permisos a l'usuari per accedir i activar el Bluetooth i la Localitació.
+ * @brief Activity inicial que s'encarrega de mostrar el llistat d'espais a cercar i a filtrar i de demanar permisos a l'usuari per accedir i activar el Bluetooth i la Localitació.
  * @author Genís Arumí Novellas
  */
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback {
