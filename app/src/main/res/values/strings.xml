@@ -1,10 +1,11 @@
 <resources>
     <string name="app_name">EPS</string>
-    <string name="search_hint">Escriu el nom de l\'espai o professor</string>
-    <string name="dialog_Location_Bluetooth">Perquè l\'aplicació funcioni correctament s\'ha d\'activar el Bluetooth</string>
+    <string name="search_hint">Filtra la llista/Filter the list</string>
+    <string name="dialog_Location_Bluetooth">Perquè l\'aplicació funcioni correctament s\'ha d\'activar el Bluetooth i la Localització</string>
     <string name="dialog_Location_Permission">Perquè l\'aplicació funcioni correctament s\'ha de permetre l\'accés a la ubicació del dispositiu</string>
-    <string name="dialog_Posicio_Usuari">Per poder-te guiar correctament cal que posis el mòbil de cara a la senyal que hi ha a la paret,
-        d\'altra manera les indicacions que obtindràs seran errònies.\nCaldrà que ho facis cada vegada que canviï el missatge</string>
+    <string name="dialog_Posicio_Usuari">Per poder-te guiar correctament fins a la destinació desitjada, caldrà que et situiïs de cara, juntament amb el mòbil,
+        a les senyals que hi haurà a les parets. D\'altra manera, les indicacions que obtindràs seran errònies.\nCaldrà que ho facis cada vegada que el missatge
+        amb la indicació a seguir canviï.</string>
     <string name="dialog_accept">D\'acord</string>
     <string name="destination">DESTINACIÓ/DESTINATION</string>
     <string name="indicacio">INDICACIONS/INDICATIONS</string>

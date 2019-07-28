@@ -121,30 +121,17 @@ public class EspaiSeleccionat extends AppCompatActivity {
             .build();
 
         ProximityZone zone = new ProximityZoneBuilder()
-            .forTag("orientacioeps-1eh")
+            .forTag("orientacioEPS")
             .inCustomRange(5.0)
             .onContextChange(new Function1<Set<? extends ProximityZoneContext>, Unit>() {
                 @Override
                 public Unit invoke(Set<? extends ProximityZoneContext> contexts) {
 
                 for (ProximityZoneContext proximityContext : contexts) {
-                    String title = proximityContext.getAttachments().get("orientacioeps-1eh/title");
-
-                    Log.d("Aprop", "Beacon: " + title);
                     String beaconActual = proximityContext.getDeviceId();
-                    Log.d("Aprop", "Id beacon " + beaconActual);
-                    //TextView text = findViewById(R.id.llocActual);
-                    //text.setText(title);
-                    Log.d("Aprop", "Num de beacon: " + numBeacon(beaconActual));
-
-                    //A mitges
-                    //Todo: També posar les frases/text en anglès separant-ho amb una barra o algo per l'estil
-
-                    //Todo: Aclarir el missatge que indica als usuaris que s'han de posar de cara a la senyal per obtenir les direccions correctes
 
                     if(!seguintCami) {
                         cami = obtenirCami(numBeacon(proximityContext.getDeviceId()), espaiSeleccionat);
-                        Log.d("Aprop", "El cami te mida: " + cami.size());
                     }
 
                     if(numBeacon(beaconActual) == obtenirUltimBeacon(cami)){
@@ -166,26 +153,6 @@ public class EspaiSeleccionat extends AppCompatActivity {
     public void stop() {
         proximityObserverHandler.stop();
     }
-
-    /*private void beaconsObtinguts(){
-        Log.d("Dades", "BEACONS");
-        for (int i = 0; i < beacons.size(); i++) {
-            Log.d("Dades", beacons.get(i).codi);
-        }
-        Log.d("Dades", "-------------------------------");
-    }*/
-
-    /*private void caminsObtinguts(){
-        Log.d("Dades", "CAMINS");
-        for(Cami c : camins){
-            Log.d("Dades", "Cami " + c.id);
-            for(int i : c.cami){
-                Log.d("Dades", Integer.toString(i));
-            }
-            Log.d("Dades", "=====================================");
-        }
-        Log.d("Dades", "-------------------------------");
-    }*/
 
     /**
      * Obté la llista de beacons del servidor i els guarda

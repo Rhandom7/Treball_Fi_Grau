@@ -61,8 +61,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1; ///< Permís de la localització
     private static final int PERMISSION_REQUEST_COARSE_BL = 2; ///< Permís de bluetooth
 
-    protected GoogleApiClient mGoogleApiClient; ///< Per demanar permisos de localització
-    protected LocationRequest locationRequest; ///< Per crear la petició per demanar permisos de localització
+    protected GoogleApiClient mGoogleApiClient; ///< Per demanar l'activació de la localització
+    protected LocationRequest locationRequest; ///< Per crear la petició per demanar l'activació de la localització
     int REQUEST_CHECK_SETTINGS = 100; ///< Valor per defecte per controlar el resultat quan es demana per activar bluetooth i localització
 
     /**
@@ -130,15 +130,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * --
+     * Informa a l'adaptador de la llista d'espais el text que ha escrit l'usuari per filtrar la llista, després de prémer la lupa
      */
     @Override
     public boolean onQueryTextSubmit(String query) {
+        adapter.filter(query);
         return false;
     }
 
     /**
-     * Informa a l'adaptador de la llista d'espais el text que ha escrit l'usuari per filtrar la llista
+     * Informa a l'adaptador de la llista d'espais el text que ha escrit l'usuari per filtrar la llista, sense necessitat de prémer la lupa
      */
     @Override
     public boolean onQueryTextChange(String newText) {
@@ -181,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * Demana a l'usuari si vol activar la Localització
+     * Demana a l'usuari si vol permetre que l'aplicació accedeixi a la Localització
      */
     private void initializeLocation(){
         //If Android version is M (6.0 API 23) or newer, check if it has Location permissions
@@ -200,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * Es crida després que l'usuari hagi acceptat o rebutjat els permisos de Localització. Si ha rebutjat es mostra un missatge informant sobre els permisos
+     * Es crida després que l'usuari hagi acceptat o rebutjat els permisos de Localització. Si ha rebutjat es mostra un missatge informant sobre la necessitat dels permisos
      */
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //Check if permission request response is from Location
@@ -209,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 // permission was granted, yay! Do the location-related task you need to do.
                 //if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {}
-
 
                 mostrarDialogPermissions(R.string.dialog_Location_Permission);
                 //dialogLocationPermission();
@@ -243,7 +243,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onResume() {
         super.onResume();
-        //if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {}
     }
 
     /**
@@ -252,22 +251,23 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onPause() {
         super.onPause();
-        //if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {}
     }
 
     /**
-     * Si l'usuari accepta els permisos i activació de Localització, s'activa la Localització
+     * Comprova que pugui accedir a la configuració de la Localització del mòbil i envia la resposta al mètoe onResult
      */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
         builder.setAlwaysShow(true);
+
         PendingResult result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
         result.setResultCallback(this);
     }
 
+
     /**
-     * --
+     * Mètode necessari posar-lo degut a la llibreria de Google. No s'utilitza.
      */
     @Override
     public void onConnectionSuspended(int i) {
@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * --
+     * Mètode necessari posar-lo degut a la llibreria de Google. No s'utilitza.
      */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -283,26 +283,23 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     *
+     * Després de comprovar la configuració de la Localització del mòbil, segons la configuració trobada, actua d'una manera o una altra
      */
     @Override
     public void onResult(@NonNull Result result) {
         final Status status = result.getStatus();
         switch (status.getStatusCode()) {
-            case LocationSettingsStatusCodes.SUCCESS:
-                // NO need to show the dialog;
+            case LocationSettingsStatusCodes.SUCCESS: //Si la Localització ja està activada, entra aquí i no és necessari fer res.
                 break;
-            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                //  Location settings are not satisfied. Show the user a dialog
+            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED://Si la Localització no estava activada, es crea la petició a l'usuari i la resposta obtinguda és capturada pel mètode onActivityResult().
                 try {
-                    // Show the dialog by calling startResolutionForResult(), and check the result in onActivityResult().
                     status.startResolutionForResult(MainActivity.this, REQUEST_CHECK_SETTINGS);
                 } catch (IntentSender.SendIntentException e) {
-                    //failed to show
+                    //Cas que no s'hagi pogut mostrar la petició per algun motiu.
                 }
                 break;
-            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                // Location settings are unavailable so not possible to show any dialog now
+            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE://Si no s'ha pogut accedir a la configuració de la Localització entra aquí.
+                Toast.makeText(getApplicationContext(), "No s'ha pogut accedir a la configuració de la Localització", Toast.LENGTH_LONG).show();
                 break;
         }
     }
@@ -317,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             .setPositiveButton(R.string.dialog_accept, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    //Prompt the user once explanation has been shown
+                    //Tanca la finestra amb el missatge que informa a l'usuari
                 }
             })
             .create()
