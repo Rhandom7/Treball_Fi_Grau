@@ -161,7 +161,6 @@ public class EspaiSeleccionat extends AppCompatActivity {
             public void onResponse(Call<List<Beacon>> call, Response<List<Beacon>> response) {
                 if (response.isSuccessful()) {
                     beacons.addAll(response.body() != null ? response.body() : beacons);
-                    //beaconsObtinguts();
                 }
                 else {
                     Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir els beacons", Toast.LENGTH_SHORT);
@@ -188,7 +187,6 @@ public class EspaiSeleccionat extends AppCompatActivity {
             public void onResponse(Call<List<Cami>> call, Response<List<Cami>> response) {
                 if (response.isSuccessful()) {
                     camins.addAll(response.body() != null ? response.body() : camins);
-                    //caminsObtinguts();
                 }
                 else {
                     Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir els camins", Toast.LENGTH_SHORT);

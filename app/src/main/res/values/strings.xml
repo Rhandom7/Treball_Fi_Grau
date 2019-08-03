@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EPS</string>
+    <string name="app_name">Orientació per l\'EPS</string>
     <string name="search_hint">Filtra la llista/Filter the list</string>
     <string name="dialog_Location_Bluetooth">Perquè l\'aplicació funcioni correctament s\'ha d\'activar el Bluetooth i la Localització</string>
     <string name="dialog_Location_Permission">Perquè l\'aplicació funcioni correctament s\'ha de permetre l\'accés a la ubicació del dispositiu</string>
