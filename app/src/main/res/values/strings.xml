@@ -3,11 +3,17 @@
     <string name="search_hint">Filtra la llista/Filter the list</string>
     <string name="dialog_Location_Bluetooth">Perquè l\'aplicació funcioni correctament s\'ha d\'activar el Bluetooth i la Localització</string>
     <string name="dialog_Location_Permission">Perquè l\'aplicació funcioni correctament s\'ha de permetre l\'accés a la ubicació del dispositiu</string>
-    <string name="dialog_Posicio_Usuari">Per poder-te guiar correctament fins a la destinació desitjada, caldrà que et situiïs de cara, juntament amb el mòbil,
-        a les senyals que hi haurà a les parets. D\'altra manera, les indicacions que obtindràs seran errònies.\nCaldrà que ho facis cada vegada que el missatge
-        amb la indicació a seguir canviï.</string>
+    <string name="posicio_usuari">Per poder-te guiar correctament fins a la destinació desitjada, caldrà que et situiïs de cara, juntament amb el mòbil,
+        a les senyals que hi haurà a les parets amb la imatge seguent. D\'altra manera, les indicacions que obtindràs podrien ser errònies.\nCaldrà que ho facis
+        cada vegada que canviï el missatge amb la indicació a seguir.\n\nPer poder-te guiar correctament fins a la destinació desitjada, caldrà que et situiïs de cara, juntament amb el mòbil,
+        a les senyals que hi haurà a les parets amb la imatge seguent. D\'altra manera, les indicacions que obtindràs podrien ser errònies.\nCaldrà que ho facis
+        cada vegada que canviï el missatge amb la indicació a seguir.
+
+    </string>
     <string name="dialog_accept">D\'acord</string>
     <string name="destination">DESTINACIÓ/DESTINATION</string>
     <string name="indicacio">INDICACIONS/INDICATIONS</string>
-    <string name="atencio">ATENCIÓ!</string>
+    <string name="atencio">ATENCIÓ! / PAY ATTENTION!</string>
+    <string name="dialog_never_show_again">No mostrar més/Never show again</string>
+    <string name="final_cami">HAS ARRIBAT, LA DESTINACIÓ ESCOLLIDA ÉS APROP! / YOU HAVE ARRIVED, YOUR DESTINATION IS CLOSE!</string>
 </resources>

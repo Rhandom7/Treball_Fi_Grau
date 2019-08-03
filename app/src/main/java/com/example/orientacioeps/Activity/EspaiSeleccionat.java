@@ -2,11 +2,14 @@ package com.example.orientacioeps.Activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,7 +56,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
 
     TextView missatge; ///< Utilitzada per escriure per pantalla les indicacions a seguir per l'usuari
 
-    //private boolean primeraVegada = true; ///< Indica si és la primera vegada que l'usuari utilitza l'aplicació per guiar-se
+    private boolean mostrarAlerta = true; ///< Serveix per controlar si l'usuari vol que es mostri l'alerta d'informació
 
 
     /**
@@ -70,20 +73,13 @@ public class EspaiSeleccionat extends AppCompatActivity {
         espaiSeleccionat = getIntent().getExtras().getString("EspaiSeleccionat");
         TextView text = findViewById(R.id.espaiSelec);
         text.setText(espaiSeleccionat);
-        //text.setTextColor(Color.rgb(0, 0, 0));
 
         obtenirBeacons();
         obtenirCamins();
 
-        //if(primeraVegada){
-            //Todo: Posar una alerta que només es pugui tancar confirmant, avisant que per poder-se orientar correctament cada vegada que canviï el missatge l'usuari
-            //Todo: ha d'estar davant de la indicació on digui que hi ha un beacon, per tenir l'orientació correcte.
-
-            //Todo: POSAR BOTÓ DE NEVER SHOW AGAIN?
-            dialogPosicioUsuari();
-            //primeraVegada = false;
-        //}
-        //startProximityContentManager();
+        SharedPreferences preferences = getSharedPreferences("PREFS", 0);
+        mostrarAlerta = preferences.getBoolean("mostrarAlerta", true);
+        if(mostrarAlerta) dialogPosicioUsuari();
     }
 
     /**
@@ -135,7 +131,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
                     }
 
                     if(numBeacon(beaconActual) == obtenirUltimBeacon(cami)){
-                        missatge.setText("HAS ARRIBAT, L'ESPAI QUE BUSQUES ESTÀ PER LA ZONA!");
+                        missatge.setText(R.string.final_cami);
                         missatge.setTextColor(Color.rgb(0,180,59));
                     }
                     else mostrarIndicacions(numBeacon(beaconActual), cami, missatge);
@@ -151,7 +147,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
      * Para el servei encarregat de gestionar beacons
      */
     public void stop() {
-        proximityObserverHandler.stop();
+        if(proximityObserverHandler != null) proximityObserverHandler.stop();
     }
 
     /**
@@ -298,18 +294,34 @@ public class EspaiSeleccionat extends AppCompatActivity {
      * Mostra per pantalla un missatge que explica a l'usuari com ha d'utilitzar l'aplicació i col·locar-se per tal de poder seguir correctament les indicacions
      */
     private void dialogPosicioUsuari(){
+        LayoutInflater inflater= LayoutInflater.from(this);
+        View view = inflater.inflate(R.layout.indications_alert, null);
+
+        TextView textview = view.findViewById(R.id.missatge_alerta);
+        textview.setText(R.string.posicio_usuari);
+
+
+        AlertDialog.Builder builder =
         new AlertDialog.Builder(this)
             .setTitle(R.string.atencio)
-            .setMessage(R.string.dialog_Posicio_Usuari)
             .setCancelable(false)
-            .setPositiveButton(R.string.dialog_accept, new DialogInterface.OnClickListener() {
+            .setPositiveButton("ACCEPT", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    //Prompt the user once explanation has been shown
+                    dialogInterface.dismiss();
                     startProximityContentManager();
                 }
-            })
-            .create()
-            .show();
+            }).setNeutralButton("Never show again", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+
+                SharedPreferences preferences = getSharedPreferences("PREFS", 0);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("mostrarAlerta", false);
+                editor.apply();
+            }
+            }).setView(view);
+            builder.create().show();
     }
 }

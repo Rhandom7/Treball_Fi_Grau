@@ -315,6 +315,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     //Tanca la finestra amb el missatge que informa a l'usuari
+                    dialogInterface.dismiss();
                 }
             })
             .create()

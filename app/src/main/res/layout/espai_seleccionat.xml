@@ -36,22 +36,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/destinacio" />
 
-    <!--<TextView
-        android:id="@+id/llocActual"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="84dp"
-        android:text=""
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />-->
-
     <TextView
         android:id="@+id/indicacio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="76dp"
-        android:layout_marginTop="85dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="76dp"
         android:gravity="center|center_horizontal|center_vertical"
         android:text="@string/indicacio"
@@ -61,16 +51,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/espaiSelec" />
 
+    <!--android:gravity="center|center_horizontal|center_vertical" -->
+
     <TextView
         android:id="@+id/missatge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="32dp"
+
         android:text=""
-        android:gravity="center|center_horizontal|center_vertical"
-        android:textSize="23sp"
+        android:textSize="19sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.126"
         app:layout_constraintStart_toStartOf="parent"

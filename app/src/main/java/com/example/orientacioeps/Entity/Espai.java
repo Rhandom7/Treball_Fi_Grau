@@ -1,5 +1,6 @@
 package com.example.orientacioeps.Entity;
 
+
 /** @class Espai
  * @brief Conté els atributs propis d'un Espai
  * @author Genís Arumí Novellas
@@ -7,4 +8,5 @@ package com.example.orientacioeps.Entity;
 public class Espai {
     public int id; ///< Id de l'Espai al servidor
     public String nom; ///< Nom de l'Espai
+    public Integer beacon; ///< Beacon que està en aquest espai
 }
