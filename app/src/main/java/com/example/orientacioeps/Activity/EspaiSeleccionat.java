@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,7 +79,9 @@ public class EspaiSeleccionat extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences("PREFS", 0);
         mostrarAlerta = preferences.getBoolean("mostrarAlerta", true);
+
         if(mostrarAlerta) dialogPosicioUsuari();
+        else startProximityContentManager();
     }
 
     /**
@@ -133,6 +135,8 @@ public class EspaiSeleccionat extends AppCompatActivity {
                     if(numBeacon(beaconActual) == obtenirUltimBeacon(cami)){
                         missatge.setText(R.string.final_cami);
                         missatge.setTextColor(Color.rgb(0,180,59));
+                        missatge.setTypeface(null, Typeface.BOLD);
+                        missatge.setGravity(Gravity.CENTER);
                     }
                     else mostrarIndicacions(numBeacon(beaconActual), cami, missatge);
                 }
@@ -204,14 +208,13 @@ public class EspaiSeleccionat extends AppCompatActivity {
     /**
      * Mostra per pantalla les indicacions que ha de seguir l'usuari per arribar a la destinació escollida
      */
-    private void mostrarIndicacions(int numBeacon, List<Indicacio> cami, TextView missatge) {
+    private void mostrarIndicacions(int idBeaconActual, List<Indicacio> cami, TextView missatge) {
         int i = 0;
         boolean trobat = false;
         while(i < cami.size() && !trobat){
-            if(cami.get(i).origen == numBeacon){
+            if(cami.get(i).origen == idBeaconActual){
                 missatge.setText(cami.get(i).missatge);
                 missatge.setTextColor(Color.rgb(0, 0, 0));
-                Log.d("Aprop", "Cami a seguir: " + cami.get(i).missatge);
                 trobat = true;
             }
             i++;
@@ -248,12 +251,12 @@ public class EspaiSeleccionat extends AppCompatActivity {
      * Obté el camí que ha de seguir l'usuari segons el beacon on es troba i la destinació que ha escollit
      */
     private List<Indicacio> obtenirCami(int idBeaconActual, String destinacio){
-        int idDestinacio = 0;
-        int i = 0, j = 0, midaCami = 0;
+        int idDestinacio;
+        int i = 0, j = 0, midaCami;
         boolean trobat = false;
         List<Indicacio> cami = new ArrayList<>();
 
-        idDestinacio = obtenirIdBeaconPerDestinacio(destinacio);
+        idDestinacio = obtenirIdBeaconSegonsDestinacio(destinacio);
 
         while (i < camins.size() && !trobat){
             midaCami = camins.get(i).cami.size();
@@ -274,7 +277,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     /**
      * Obté la id del beacon al servidor segons la destinació (espai) especificada
      */
-    private int obtenirIdBeaconPerDestinacio(String destinacio){
+    private int obtenirIdBeaconSegonsDestinacio(String destinacio){
         int id = 0, i = 0;
         boolean trobat = false;
 
@@ -292,16 +295,9 @@ public class EspaiSeleccionat extends AppCompatActivity {
      * Mostra per pantalla un missatge que explica a l'usuari com ha d'utilitzar l'aplicació i col·locar-se per tal de poder seguir correctament les indicacions
      */
     private void dialogPosicioUsuari(){
-        LayoutInflater inflater= LayoutInflater.from(this);
-        View view = inflater.inflate(R.layout.indications_alert, null);
-
-        TextView textview = view.findViewById(R.id.missatge_alerta);
-        textview.setText(R.string.posicio_usuari);
-
-
-        AlertDialog.Builder builder =
         new AlertDialog.Builder(this)
             .setTitle(R.string.atencio)
+            .setMessage(R.string.missatge_alerta)
             .setCancelable(false)
             .setPositiveButton("ACCEPT", new DialogInterface.OnClickListener() {
                 @Override
@@ -319,7 +315,8 @@ public class EspaiSeleccionat extends AppCompatActivity {
                 editor.putBoolean("mostrarAlerta", false);
                 editor.apply();
             }
-            }).setView(view);
-            builder.create().show();
+            })
+            .create()
+            .show();
     }
 }

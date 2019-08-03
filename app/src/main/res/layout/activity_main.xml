@@ -5,10 +5,10 @@
 
     <SearchView
         android:id="@+id/search"
-        android:queryHint="@string/search_hint"
-        android:layout_width="fill_parent"
+        android:layout_width="287dp"
         android:layout_height="wrap_content"
-        android:iconifiedByDefault="false">
+        android:iconifiedByDefault="false"
+        android:queryHint="@string/search_hint">
 
         <requestFocus />
     </SearchView>
@@ -18,5 +18,17 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/search" />
+
+    <Button
+        android:id="@+id/botoInformacio"
+        android:layout_width="58dp"
+        android:layout_height="37dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="6dp"
+        android:layout_toEndOf="@+id/search"
+        android:backgroundTint="#001E85"
+        android:text="@string/boto_informacio"
+        android:textColor="#FFFFFF" />
 
 </RelativeLayout>

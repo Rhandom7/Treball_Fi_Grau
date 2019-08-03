@@ -17,6 +17,7 @@ import android.content.Intent;
 
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private ListView list; ///< Controla la llista d'espais
     private ListViewAdapter adapter; ///< Adaptador de la llista d'espais
     private SearchView editSearch; ///< Controla la barra de filtrat
+    private Button infoButton; ///< Botó per accedir a la pantalla d'informació de l'aplicació
 
     List<Espai> llistaEspais = new ArrayList<>(); ///< Llista d'espais a cercar
 
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setContentView(R.layout.activity_main);
 
         list = findViewById(R.id.llistaEspais);
+        infoButton = findViewById(R.id.botoInformacio);
 
         mTodoService = ((TodoApp)this.getApplication()).getAPI();
 
@@ -95,6 +98,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(MainActivity.this, EspaiSeleccionat.class);
                 i.putExtra("EspaiSeleccionat", llistaEspais.get(position).nom);
+                MainActivity.this.startActivity(i);
+            }
+        });
+
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, Informacio.class);
                 MainActivity.this.startActivity(i);
             }
         });
@@ -311,10 +322,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         new AlertDialog.Builder(this)
             .setMessage(id)
             .setCancelable(false)
-            .setPositiveButton(R.string.dialog_accept, new DialogInterface.OnClickListener() {
+            .setPositiveButton("ACCEPT", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    //Tanca la finestra amb el missatge que informa a l'usuari
                     dialogInterface.dismiss();
                 }
             })
