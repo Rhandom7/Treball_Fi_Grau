@@ -8,5 +8,5 @@ package com.example.orientacioeps.Entity;
 public class Espai {
     public int id; ///< Id de l'Espai al servidor
     public String nom; ///< Nom de l'Espai
-    public Integer beacon; ///< Beacon que està en aquest espai
+    public int beacon; ///< Beacon que està en aquest espai
 }

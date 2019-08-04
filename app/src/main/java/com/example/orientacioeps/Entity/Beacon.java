@@ -11,5 +11,5 @@ public class Beacon {
     public String codi; ///< Id pròpia del beacon
     public int pis; ///< Pis on està el beacon
     public String edifici; ///< Edifici on es troba el beacon
-    public List<String> espais; ///< Espais/destinacions que té aprop el beacon
+    public List<Integer> espais; ///< Espais/destinacions que té aprop el beacon
 }

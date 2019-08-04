@@ -80,16 +80,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         mTodoService = ((TodoApp)this.getApplication()).getAPI();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
-        mGoogleApiClient.connect();
-
-        locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(30 * 1000);
-        locationRequest.setFastestInterval(5 * 1000);
-
-        initializeLocation();
-        initializeBluetooth();
+        accesALocalitzacio();
+        activacioBluetooth();
+        activacioLocalitzacio();
 
         obtenirEspais();
 
@@ -97,7 +90,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(MainActivity.this, EspaiSeleccionat.class);
-                i.putExtra("EspaiSeleccionat", llistaEspais.get(position).nom);
+                i.putExtra("NomEspaiSeleccionat", llistaEspais.get(position).nom);
+                i.putExtra("IdEspaiSeleccionat", (position+1));
                 MainActivity.this.startActivity(i);
             }
         });
@@ -159,32 +153,39 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
+     * Demana a l'usuari si vol activar la Localització amb una alerta
+     */
+    private void activacioLocalitzacio(){
+        mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
+        mGoogleApiClient.connect();
+
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(30 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
+    }
+
+    /**
      * Demana a l'usuari si vol activar el Bluetooth
      */
-    private void initializeBluetooth(){
-        //Check if device does support BT by hardware
-        if (!getBaseContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)) {
-            //Toast shows a message on the screen for a LENGTH_SHORT period
+    private void activacioBluetooth(){
+        if (!getBaseContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)) {//Comprova si el hardware del dispositiu suporta Bluetooth
+            //Si el dispositiu no suporta Bluetooth, s'informa a l'usuari
             Toast.makeText(this, "BLUETOOTH NOT SUPPORTED!", Toast.LENGTH_SHORT).show();
-            finish();
         }
-        //Check if device does support BT Low Energy by hardware. Else close the app(finish())!
-        if (!getBaseContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            //Toast shows a message on the screen for a LENGTH_SHORT period
+        if (!getBaseContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {//Comprova si el hardware del dispositiu suporta Bluetooth Low Energy (BLE)
+            //Si el dispositiu no suporta BLE, s'informa a l'usuari
             Toast.makeText(this, "BLE NOT SUPPORTED!", Toast.LENGTH_SHORT).show();
-            finish();
-        }else {
-            //If BLE is supported, get the BT adapter. Preparing for use!
+        }
+        else {//Si suporta BLE, agafa l'adaptador de Bluetooth
             BluetoothAdapter mBTAdapter = BluetoothAdapter.getDefaultAdapter();
-            //If getting the adapter returns error, close the app with error message!
-            if (mBTAdapter == null) {
+            if (mBTAdapter == null) {//Si intentant agafar l'adaptador retorna un error, s'informa a l'usuari
                 Toast.makeText(this, "ERROR GETTING BLUETOOTH ADAPTER!", Toast.LENGTH_SHORT).show();
-                finish();
             }
             else{
-                //Check if BT is enabled! This method requires BT permissions in the manifest.
+                //Es comprova si el Bluetooth està activat. Per fer-ho, es necessita haver especificat els permisos de Bluetooth al document Manifest
                 if (!mBTAdapter.isEnabled()) {
-                    //If it is not enabled, ask user to enable it with default BT enable dialog! BT enable response will be received in the onActivityResult method.
+                    //Si no està activat, es demana a l'usuari que l'activi amb una alerta. La resposta de l'usuari es capturarà al mètode onActivityResult
                     Intent enableBTintent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(enableBTintent, PERMISSION_REQUEST_COARSE_BL);
                 }
@@ -195,19 +196,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     /**
      * Demana a l'usuari si vol permetre que l'aplicació accedeixi a la Localització
      */
-    private void initializeLocation(){
-        //If Android version is M (6.0 API 23) or newer, check if it has Location permissions
+    private void accesALocalitzacio(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            /*if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
-            } else {*/
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
-            //}
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
         }
     }
 
@@ -215,20 +206,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * Es crida després que l'usuari hagi acceptat o rebutjat els permisos de Localització. Si ha rebutjat es mostra un missatge informant sobre la necessitat dels permisos
      */
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        //Check if permission request response is from Location
-        // If request is cancelled, the result arrays are empty.
         if (requestCode == PERMISSION_REQUEST_COARSE_LOCATION) {
             if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                // permission was granted, yay! Do the location-related task you need to do.
-                //if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {}
-
+                list.setOnItemClickListener(null);
                 mostrarDialogPermissions(R.string.dialog_Location_Permission);
-                //dialogLocationPermission();
             }
-            /*else {
-                // permission denied, boo! Disable the functionality that depends on this permission.
-                dialogLocationPermission();
-            }*/
         }
     }
 
@@ -240,16 +222,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CHECK_SETTINGS || requestCode == PERMISSION_REQUEST_COARSE_BL) {
             if (resultCode == RESULT_OK) {
-                Toast.makeText(getApplicationContext(), "Bluetooth i/o Localització activats", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Bluetooth i/o Localització activats", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(getApplicationContext(), "Bluetooth i/o Localització no activats", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Bluetooth i/o Localització no activats", Toast.LENGTH_LONG).show();
+                list.setOnItemClickListener(null);
                 mostrarDialogPermissions(R.string.dialog_Location_Bluetooth);
             }
         }
     }
 
     /**
-     * Mètode que es crida quan es posa l'aplicació en foreground
+     * Mètode que es crida quan es posa l'aplicació en foreground, torna a comprovar si es vol activar la Localització, Bluetooth i l'accés a la Localització
      */
     @Override
     protected void onResume() {

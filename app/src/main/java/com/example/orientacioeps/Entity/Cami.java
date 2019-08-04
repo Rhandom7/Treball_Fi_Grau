@@ -8,5 +8,5 @@ import java.util.List;
  */
 public class Cami {
     public int id; ///< Id del Camí al servidor
-    public List<Indicacio> cami; ///< Llista que conté tot un Camí amb Indicacions
+    public List<Indicacio> indicacions; ///< Llista que conté les Indicacions que formen un Camí
 }

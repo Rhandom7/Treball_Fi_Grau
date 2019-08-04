@@ -9,7 +9,7 @@ import com.example.orientacioeps.Entity.Cami;
 import java.util.List;
 
 /** @class TodoApi
- * @brief Conté les crides al servidor ("http://private-ae02a7-tfgorientacioeps.apiary-mock.com/EL_QUE_ES_VULGUI_OBTENIR")
+ * @brief Conté les crides al servidor ("http://private-ae02a7-tfgorientacioeps.apiary-mock.com/EL_QUE_ES_VULGUI_OBTENIR") (/espais, /beacons o /camins)
  * @author Genís Arumí Novellas
  */
 public interface TodoApi {

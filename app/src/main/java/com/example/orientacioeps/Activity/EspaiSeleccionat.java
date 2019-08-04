@@ -50,7 +50,8 @@ public class EspaiSeleccionat extends AppCompatActivity {
     private Context context; ///< Guarda el context d'aquesta activity
     private EstimoteCloudCredentials cloudCredentials; ///< Guarda les credencials de l'aplicació que permeten treballar amb els beacons
     private ProximityObserver.Handler proximityObserverHandler; ///< Ajuda a gestionar el comportament del servei utilitzat per detectar beacons
-    private String espaiSeleccionat = ""; ///< Espai que ha seleccionat l'usuari a l'activity inicial
+    private String nomEspaiSeleccionat = ""; ///< Nom de l'espai que ha seleccionat l'usuari a l'activity inicial
+    private int idEspaiSeleccionat = 0; ///< Id de l'espai que ha seleccionat l'usuari a l'activity inicial
     private boolean seguintCami = false; ///< Indica si l'usuari ja està seguint un camí
     private List<Indicacio> cami = new ArrayList<>(); ///< Guarda el camí que segueix l'usuari en un moment donat
 
@@ -70,9 +71,10 @@ public class EspaiSeleccionat extends AppCompatActivity {
 
         mTodoService = ((TodoApp)this.getApplication()).getAPI();
 
-        espaiSeleccionat = getIntent().getExtras().getString("EspaiSeleccionat");
+        nomEspaiSeleccionat = getIntent().getExtras().getString("NomEspaiSeleccionat");
+        idEspaiSeleccionat = getIntent().getExtras().getInt("IdEspaiSeleccionat");
         TextView text = findViewById(R.id.espaiSelec);
-        text.setText(espaiSeleccionat);
+        text.setText(nomEspaiSeleccionat);
 
         obtenirBeacons();
         obtenirCamins();
@@ -107,6 +109,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
      * segons el beacon detectat i la destinació final escollida anteriorment per l'usuari.
      */
     public void start() {
+
         ProximityObserver proximityObserver = new ProximityObserverBuilder(context, cloudCredentials)
             .onError(new Function1<Throwable, Unit>() {
                 @Override
@@ -125,22 +128,21 @@ public class EspaiSeleccionat extends AppCompatActivity {
                 @Override
                 public Unit invoke(Set<? extends ProximityZoneContext> contexts) {
 
-                for (ProximityZoneContext proximityContext : contexts) {
-                    String beaconActual = proximityContext.getDeviceId();
+                    for (ProximityZoneContext proximityContext : contexts) {
+                        String beaconActual = proximityContext.getDeviceId();
 
-                    if(!seguintCami) {
-                        cami = obtenirCami(numBeacon(proximityContext.getDeviceId()), espaiSeleccionat);
-                    }
+                        if (!seguintCami) {
+                            cami = obtenirCami(numBeacon(proximityContext.getDeviceId()), idEspaiSeleccionat);
+                        }
 
-                    if(numBeacon(beaconActual) == obtenirUltimBeacon(cami)){
-                        missatge.setText(R.string.final_cami);
-                        missatge.setTextColor(Color.rgb(0,180,59));
-                        missatge.setTypeface(null, Typeface.BOLD);
-                        missatge.setGravity(Gravity.CENTER);
+                        if (numBeacon(beaconActual) == obtenirUltimBeacon(cami)) {
+                            missatge.setText(R.string.final_cami);
+                            missatge.setTextColor(Color.rgb(0, 180, 59));
+                            missatge.setTypeface(null, Typeface.BOLD);
+                            missatge.setGravity(Gravity.CENTER);
+                        } else mostrarIndicacions(numBeacon(beaconActual), cami, missatge);
                     }
-                    else mostrarIndicacions(numBeacon(beaconActual), cami, missatge);
-                }
-                return null;
+                    return null;
                 }
             })
             .build();
@@ -231,7 +233,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     * Obté la id interna del beacon al servidor segons la seva id detectada
+     * Obté la id interna del beacon al servidor segons la seva id obtiguda amb l'escaneig
      */
     private int numBeacon(String idBeacon){
         int num = 0, i = 0;
@@ -250,7 +252,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     /**
      * Obté el camí que ha de seguir l'usuari segons el beacon on es troba i la destinació que ha escollit
      */
-    private List<Indicacio> obtenirCami(int idBeaconActual, String destinacio){
+    private List<Indicacio> obtenirCami(int idBeaconActual, int destinacio){
         int idDestinacio;
         int i = 0, j = 0, midaCami;
         boolean trobat = false;
@@ -259,11 +261,11 @@ public class EspaiSeleccionat extends AppCompatActivity {
         idDestinacio = obtenirIdBeaconSegonsDestinacio(destinacio);
 
         while (i < camins.size() && !trobat){
-            midaCami = camins.get(i).cami.size();
+            midaCami = camins.get(i).indicacions.size();
 
             while(j < midaCami && !trobat){
-                if(camins.get(i).cami.get(j).origen == idBeaconActual && camins.get(i).cami.get(midaCami-1).desti == idDestinacio){
-                    cami = camins.get(i).cami;
+                if(camins.get(i).indicacions.get(j).origen == idBeaconActual && camins.get(i).indicacions.get(midaCami-1).desti == idDestinacio){
+                    cami = camins.get(i).indicacions;
                     trobat = true;
                     seguintCami = true;
                 }
@@ -277,7 +279,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     /**
      * Obté la id del beacon al servidor segons la destinació (espai) especificada
      */
-    private int obtenirIdBeaconSegonsDestinacio(String destinacio){
+    private int obtenirIdBeaconSegonsDestinacio(int destinacio){
         int id = 0, i = 0;
         boolean trobat = false;
 

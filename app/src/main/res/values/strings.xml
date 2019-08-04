@@ -2,16 +2,21 @@
     <string name="app_name">Orientació per l\'EPS</string>
     <string name="search_hint">Filtra la llista/Filter the list</string>
     <string name="boto_informacio">INFO</string>
-    <string name="dialog_Location_Bluetooth">Perquè l\'aplicació funcioni correctament s\'ha d\'activar el Bluetooth i la Localització</string>
-    <string name="dialog_Location_Permission">Perquè l\'aplicació funcioni correctament s\'ha de permetre l\'accés a la ubicació del dispositiu</string>
+    <string name="dialog_Location_Bluetooth">Perquè l\'aplicació funcioni correctament s\'han d\'activar el Bluetooth i la Localització.\n\nTo enable the
+        application to work correctly, Bluetooth and Localization must be activated.
+    </string>
+    <string name="dialog_Location_Permission">Perquè l\'aplicació funcioni correctament s\'ha de permetre l\'accés a la ubicació del dispositiu.\n\nTo enable
+        the application to work correctly, access to the location of the device must be allowed.
+    </string>
     <string name="posicio_usuari">Per poder-te guiar correctament a la destinació escollida, caldrà que et situiïs de cara, juntament amb el mòbil,
-        a les senyals que hi haurà a les parets amb la imatge següent. D\'altra manera, les indicacions que obtindràs podrien ser errònies.\nSerà necessari fer-ho
-        quan es comenci i cada vegada que canviï el missatge amb la indicació a seguir.\n\nIn order to correctly guide you to the chosen destination, you will have to face the mobile with
-        the signs that will appear on the walls with the following image. Otherwise, the directions you will get may be wrong.\nIt will be necessary to do so at the beginning
+        a les senyals que hi haurà a les parets amb la imatge que hi ha al final. D\'altra manera, les indicacions que obtindràs podrien ser errònies.\nSerà necessari fer-ho
+        quan es comenci i cada vegada que canviï el missatge amb la indicació a seguir.\n\n\nIn order to correctly guide you to the chosen destination, you will have to face
+        the mobile to the signs that will appear on the walls with the image at the end. Otherwise, the directions you will get may be wrong.\nIt will be necessary to do so at the beginning
         and every time the message with the indication to follow changes.
     </string>
     <string name="missatge_alerta">És molt recomanable llegir-se les instruccions de l\'aplicació que es poden trobar a la pantalla anterior amb el botó INFO.\n\nIt is highly recommended
-        to read the application instructions that can be found on the previous screen with the INFO button.</string>
+        to read the application instructions that can be found on the previous screen with the INFO button.
+    </string>
     <string name="destination">DESTINACIÓ/DESTINATION</string>
     <string name="indicacio">INDICACIONS/INDICATIONS</string>
     <string name="atencio">ATENCIÓ! / PAY ATTENTION!</string>
