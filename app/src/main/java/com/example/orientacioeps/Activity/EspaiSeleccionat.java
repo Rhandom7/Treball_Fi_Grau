@@ -52,6 +52,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     private ProximityObserver.Handler proximityObserverHandler; ///< Ajuda a gestionar el comportament del servei utilitzat per detectar beacons
     private String nomEspaiSeleccionat = ""; ///< Nom de l'espai que ha seleccionat l'usuari a l'activity inicial
     private int idEspaiSeleccionat = 0; ///< Id de l'espai que ha seleccionat l'usuari a l'activity inicial
+    private int beaconEspaiSeleccionat; ///< Beacon que té a la vora l'espai seleccionat a l'activity inicial
     private boolean seguintCami = false; ///< Indica si l'usuari ja està seguint un camí
     private List<Indicacio> cami = new ArrayList<>(); ///< Guarda el camí que segueix l'usuari en un moment donat
 
@@ -73,6 +74,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
 
         nomEspaiSeleccionat = getIntent().getExtras().getString("NomEspaiSeleccionat");
         idEspaiSeleccionat = getIntent().getExtras().getInt("IdEspaiSeleccionat");
+        beaconEspaiSeleccionat = getIntent().getExtras().getInt("BeaconEspai");
         TextView text = findViewById(R.id.espaiSelec);
         text.setText(nomEspaiSeleccionat);
 
@@ -131,16 +133,10 @@ public class EspaiSeleccionat extends AppCompatActivity {
                     for (ProximityZoneContext proximityContext : contexts) {
                         String beaconActual = proximityContext.getDeviceId();
 
-                        if (!seguintCami) {
-                            cami = obtenirCami(numBeacon(proximityContext.getDeviceId()), idEspaiSeleccionat);
-                        }
+                        if (!seguintCami) cami = obtenirCami(numBeacon(proximityContext.getDeviceId()));
 
-                        if (numBeacon(beaconActual) == obtenirUltimBeacon(cami)) {
-                            missatge.setText(R.string.final_cami);
-                            missatge.setTextColor(Color.rgb(0, 180, 59));
-                            missatge.setTypeface(null, Typeface.BOLD);
-                            missatge.setGravity(Gravity.CENTER);
-                        } else mostrarIndicacions(numBeacon(beaconActual), cami, missatge);
+                        if (numBeacon(beaconActual) == beaconEspaiSeleccionat || numBeacon(beaconActual) == obtenirUltimBeacon(cami)) mostrarMissatgeArribada();
+                        else mostrarIndicacions(numBeacon(beaconActual), cami, missatge);
                     }
                     return null;
                 }
@@ -252,19 +248,15 @@ public class EspaiSeleccionat extends AppCompatActivity {
     /**
      * Obté el camí que ha de seguir l'usuari segons el beacon on es troba i la destinació que ha escollit
      */
-    private List<Indicacio> obtenirCami(int idBeaconActual, int destinacio){
-        int idDestinacio;
+    private List<Indicacio> obtenirCami(int idBeaconActual){
         int i = 0, j = 0, midaCami;
         boolean trobat = false;
         List<Indicacio> cami = new ArrayList<>();
 
-        idDestinacio = obtenirIdBeaconSegonsDestinacio(destinacio);
-
         while (i < camins.size() && !trobat){
             midaCami = camins.get(i).indicacions.size();
-
             while(j < midaCami && !trobat){
-                if(camins.get(i).indicacions.get(j).origen == idBeaconActual && camins.get(i).indicacions.get(midaCami-1).desti == idDestinacio){
+                if(camins.get(i).indicacions.get(j).origen == idBeaconActual && camins.get(i).indicacions.get(midaCami-1).desti == beaconEspaiSeleccionat){
                     cami = camins.get(i).indicacions;
                     trobat = true;
                     seguintCami = true;
@@ -277,20 +269,14 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
-     * Obté la id del beacon al servidor segons la destinació (espai) especificada
+     * Mostra per pantalla un missatge informant a l'usuari que ha arribat a la zona on es troba la destinació seleccionada
      */
-    private int obtenirIdBeaconSegonsDestinacio(int destinacio){
-        int id = 0, i = 0;
-        boolean trobat = false;
 
-        while(i < beacons.size() && !trobat){
-            if(beacons.get(i).espais.contains(destinacio)){
-                id = beacons.get(i).id;
-                trobat = true;
-            }
-            i++;
-        }
-        return id;
+    private void mostrarMissatgeArribada(){
+        missatge.setText(R.string.final_cami);
+        missatge.setTextColor(Color.rgb(0, 180, 59));
+        missatge.setTypeface(null, Typeface.BOLD);
+        missatge.setGravity(Gravity.CENTER);
     }
 
     /**

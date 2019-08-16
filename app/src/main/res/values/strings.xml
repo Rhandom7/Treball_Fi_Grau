@@ -17,8 +17,8 @@
     <string name="missatge_alerta">És molt recomanable llegir-se les instruccions de l\'aplicació que es poden trobar a la pantalla anterior amb el botó INFO.\n\nIt is highly recommended
         to read the application instructions that can be found on the previous screen with the INFO button.
     </string>
-    <string name="destination">DESTINACIÓ/DESTINATION</string>
-    <string name="indicacio">INDICACIONS/INDICATIONS</string>
+    <string name="destination">DESTINACIÓ\nDESTINATION</string>
+    <string name="indicacio">INDICACIONS\nINDICATIONS</string>
     <string name="atencio">ATENCIÓ! / PAY ATTENTION!</string>
     <string name="final_cami">HAS ARRIBAT, LA DESTINACIÓ ESCOLLIDA ÉS APROP!\n\n\nYOU HAVE ARRIVED, YOUR DESTINATION IS NEARBY!</string>
 </resources>
