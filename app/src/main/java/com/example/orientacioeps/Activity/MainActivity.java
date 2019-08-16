@@ -91,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(MainActivity.this, EspaiSeleccionat.class);
                 i.putExtra("NomEspaiSeleccionat", llistaEspais.get(position).nom);
-                i.putExtra("IdEspaiSeleccionat", (position+1));
                 i.putExtra("BeaconEspai", llistaEspais.get(position).beacon);
                 MainActivity.this.startActivity(i);
             }

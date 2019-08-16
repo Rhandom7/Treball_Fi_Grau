@@ -5,7 +5,8 @@ package com.example.orientacioeps.Entity;
  * @author Genís Arumí Novellas
  */
 public class Indicacio {
-    public int origen; ///< Id del Beacon "origen"
-    public int desti; ///< Id del Beacon "desti"
+    public int id; ///< Id de la Indicació
+    public Beacon origen; ///< Beacon "origen"
+    public Beacon desti; ///< Beacon "desti"
     public String missatge; ///< Missatge per indicar com arribar del beacon "origen" al beacon "desti"
 }

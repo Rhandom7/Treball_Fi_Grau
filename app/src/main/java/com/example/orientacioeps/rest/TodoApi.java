@@ -6,6 +6,8 @@ import retrofit2.http.*;
 import com.example.orientacioeps.Entity.Espai;
 import com.example.orientacioeps.Entity.Beacon;
 import com.example.orientacioeps.Entity.Cami;
+import com.example.orientacioeps.Entity.Indicacio;
+
 import java.util.List;
 
 /** @class TodoApi
@@ -21,5 +23,8 @@ public interface TodoApi {
 
     @GET("/camins")
     Call<List<Cami>> getCamins();
+
+    @GET("/indicacions")
+    Call<List<Indicacio>> getIndicacions();
 }
 

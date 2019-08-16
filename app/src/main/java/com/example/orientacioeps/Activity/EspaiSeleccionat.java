@@ -46,15 +46,16 @@ public class EspaiSeleccionat extends AppCompatActivity {
     TodoApi mTodoService; ///< Encarregat de fer crides al servidor
     List<Beacon> beacons = new ArrayList<>(); ///< Llista de beacons obtinguts del servidor
     List<Cami> camins = new ArrayList<>(); ///< Llista de camins obtinguts del servidor
+    List<Indicacio> indicacions = new ArrayList<>(); ///< Llista d'indicacions obtinguda del servidor
 
     private Context context; ///< Guarda el context d'aquesta activity
     private EstimoteCloudCredentials cloudCredentials; ///< Guarda les credencials de l'aplicació que permeten treballar amb els beacons
     private ProximityObserver.Handler proximityObserverHandler; ///< Ajuda a gestionar el comportament del servei utilitzat per detectar beacons
     private String nomEspaiSeleccionat = ""; ///< Nom de l'espai que ha seleccionat l'usuari a l'activity inicial
-    private int idEspaiSeleccionat = 0; ///< Id de l'espai que ha seleccionat l'usuari a l'activity inicial
     private int beaconEspaiSeleccionat; ///< Beacon que té a la vora l'espai seleccionat a l'activity inicial
+    private int numBeaconActual; ///< Guarda la id del beacon actual
     private boolean seguintCami = false; ///< Indica si l'usuari ja està seguint un camí
-    private List<Indicacio> cami = new ArrayList<>(); ///< Guarda el camí que segueix l'usuari en un moment donat
+    private List<Integer> cami = new ArrayList<>(); ///< Guarda el camí que segueix l'usuari en un moment donat
 
     TextView missatge; ///< Utilitzada per escriure per pantalla les indicacions a seguir per l'usuari
 
@@ -73,19 +74,19 @@ public class EspaiSeleccionat extends AppCompatActivity {
         mTodoService = ((TodoApp)this.getApplication()).getAPI();
 
         nomEspaiSeleccionat = getIntent().getExtras().getString("NomEspaiSeleccionat");
-        idEspaiSeleccionat = getIntent().getExtras().getInt("IdEspaiSeleccionat");
         beaconEspaiSeleccionat = getIntent().getExtras().getInt("BeaconEspai");
         TextView text = findViewById(R.id.espaiSelec);
         text.setText(nomEspaiSeleccionat);
 
         obtenirBeacons();
         obtenirCamins();
+        obtenirIndicacions();
 
         SharedPreferences preferences = getSharedPreferences("PREFS", 0);
         mostrarAlerta = preferences.getBoolean("mostrarAlerta", true);
 
-        if(mostrarAlerta) dialogPosicioUsuari();
-        else startProximityContentManager();
+        if(mostrarAlerta) dialogFuncionamentAplicacio();
+        startProximityContentManager();
     }
 
     /**
@@ -116,7 +117,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
             .onError(new Function1<Throwable, Unit>() {
                 @Override
                 public Unit invoke(Throwable throwable) {
-                    Log.e("app", "proximity observer error: " + throwable);
+                    Log.e("App", "Proximity observer error: " + throwable);
                     return null;
                 }
             })
@@ -133,10 +134,13 @@ public class EspaiSeleccionat extends AppCompatActivity {
                     for (ProximityZoneContext proximityContext : contexts) {
                         String beaconActual = proximityContext.getDeviceId();
 
-                        if (!seguintCami) cami = obtenirCami(numBeacon(proximityContext.getDeviceId()));
+                        numBeaconActual = numBeacon(beaconActual);
 
-                        if (numBeacon(beaconActual) == beaconEspaiSeleccionat || numBeacon(beaconActual) == obtenirUltimBeacon(cami)) mostrarMissatgeArribada();
-                        else mostrarIndicacions(numBeacon(beaconActual), cami, missatge);
+                        if(numBeaconActual == beaconEspaiSeleccionat) mostrarMissatgeArribada();
+                        else {
+                            if(!seguintCami) cami = obtenirCami(numBeacon(proximityContext.getDeviceId()));
+                            mostrarIndicacions(numBeaconActual, cami);
+                        }
                     }
                     return null;
                 }
@@ -204,28 +208,48 @@ public class EspaiSeleccionat extends AppCompatActivity {
     }
 
     /**
+     * Obté la llista d'indicacions del servidor i els guarda
+     */
+    private void obtenirIndicacions(){
+        Call<List<Indicacio>> call = mTodoService.getIndicacions();
+
+        call.enqueue(new Callback<List<Indicacio>>() {
+            @Override
+            public void onResponse(Call<List<Indicacio>> call, Response<List<Indicacio>> response) {
+                if (response.isSuccessful()) {
+                    indicacions.addAll(response.body() != null ? response.body() : indicacions);
+                }
+                else {
+                    Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir les indicacions", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Indicacio>> call, Throwable t) {
+                Toast toast = Toast.makeText(EspaiSeleccionat.this, "Error intentant obtenir les indicacions", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+    }
+
+    /**
      * Mostra per pantalla les indicacions que ha de seguir l'usuari per arribar a la destinació escollida
      */
-    private void mostrarIndicacions(int idBeaconActual, List<Indicacio> cami, TextView missatge) {
-        int i = 0;
+    private void mostrarIndicacions(int idBeaconActual, List<Integer> cami) {
+        int i = 0, auxOrigen, auxDesti;
         boolean trobat = false;
-        while(i < cami.size() && !trobat){
-            if(cami.get(i).origen == idBeaconActual){
-                missatge.setText(cami.get(i).missatge);
+
+        auxOrigen = cami.indexOf(idBeaconActual);
+        auxDesti = cami.get(auxOrigen+1);
+
+        while(i < indicacions.size() && !trobat){
+            if(indicacions.get(i).origen.id == idBeaconActual && indicacions.get(i).desti.id == auxDesti){
+                missatge.setText(indicacions.get(i).missatge);
                 missatge.setTextColor(Color.rgb(0, 0, 0));
                 trobat = true;
             }
             i++;
         }
-    }
-
-    /**
-     * Obté l'últim beacon del camí especificat
-     */
-    private int obtenirUltimBeacon(List<Indicacio> cami){
-        int numBeacon;
-        numBeacon = cami.get(cami.size()-1).desti;
-        return numBeacon;
     }
 
     /**
@@ -248,22 +272,24 @@ public class EspaiSeleccionat extends AppCompatActivity {
     /**
      * Obté el camí que ha de seguir l'usuari segons el beacon on es troba i la destinació que ha escollit
      */
-    private List<Indicacio> obtenirCami(int idBeaconActual){
-        int i = 0, j = 0, midaCami;
+    private List<Integer> obtenirCami(int idBeaconActual){
+        int i = 0, posActual, posDesti;
         boolean trobat = false;
-        List<Indicacio> cami = new ArrayList<>();
+        List<Integer> cami = new ArrayList<>();
 
-        while (i < camins.size() && !trobat){
-            midaCami = camins.get(i).indicacions.size();
-            while(j < midaCami && !trobat){
-                if(camins.get(i).indicacions.get(j).origen == idBeaconActual && camins.get(i).indicacions.get(midaCami-1).desti == beaconEspaiSeleccionat){
-                    cami = camins.get(i).indicacions;
+        while(i < camins.size() && !trobat){
+            cami = camins.get(i).cami;
+
+            if(cami.contains(idBeaconActual) && cami.contains(beaconEspaiSeleccionat)){
+                posActual = cami.indexOf(idBeaconActual);
+                posDesti = cami.indexOf(beaconEspaiSeleccionat);
+
+                if(posDesti > posActual){
                     trobat = true;
                     seguintCami = true;
                 }
-                j++;
             }
-            i++;
+            else i++;
         }
         return cami;
     }
@@ -282,7 +308,7 @@ public class EspaiSeleccionat extends AppCompatActivity {
     /**
      * Mostra per pantalla un missatge que explica a l'usuari com ha d'utilitzar l'aplicació i col·locar-se per tal de poder seguir correctament les indicacions
      */
-    private void dialogPosicioUsuari(){
+    private void dialogFuncionamentAplicacio(){
         new AlertDialog.Builder(this)
             .setTitle(R.string.atencio)
             .setMessage(R.string.missatge_alerta)
@@ -291,7 +317,6 @@ public class EspaiSeleccionat extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     dialogInterface.dismiss();
-                    startProximityContentManager();
                 }
             }).setNeutralButton("Never show again", new DialogInterface.OnClickListener() {
             @Override
